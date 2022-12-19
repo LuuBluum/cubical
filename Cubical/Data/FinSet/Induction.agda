@@ -20,7 +20,7 @@ open import Cubical.Data.Nat
   renaming (_+_ to _+ℕ_) hiding (elim)
 open import Cubical.Data.Unit
 open import Cubical.Data.Empty as Empty
-open import Cubical.Data.Sum
+open import Cubical.Data.Sum renaming (⊎-IdR-⊥-≃ to ⊎-⊥-≃)
 
 open import Cubical.Data.Fin renaming (Fin to Finℕ)
 open import Cubical.Data.SumFin
