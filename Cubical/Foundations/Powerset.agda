@@ -63,3 +63,6 @@ subst-∈ A = subst (_∈ A)
                                             (⊆-refl-consequence A B)
                                             (λ _ → isSetℙ A B _ _)
                                             (λ _ → isPropΣ (⊆-isProp A B) (λ _ → ⊆-isProp B A) _ _))
+
+⊆-trans : (A B C : ℙ X) → (A ⊆ B) → (B ⊆ C) → (A ⊆ C)
+⊆-trans A B C A⊆B B⊆C = λ x x∈A → B⊆C x (A⊆B x x∈A)

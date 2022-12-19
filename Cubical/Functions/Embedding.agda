@@ -15,10 +15,12 @@ open import Cubical.Foundations.Transport
 open import Cubical.Foundations.Univalence using (ua; univalence; pathToEquiv)
 open import Cubical.Functions.Fibration
 
+open import Cubical.Data.Empty
 open import Cubical.Data.Sigma
+open import Cubical.Data.Unit
 open import Cubical.Functions.Fibration
 open import Cubical.Functions.FunExtEquiv
-open import Cubical.Relation.Nullary using (Discrete; yes; no)
+open import Cubical.Relation.Nullary using (Discrete; yes; no; decRec; Dec)
 open import Cubical.Structures.Axioms
 
 open import Cubical.Reflection.StrictEquiv
@@ -180,6 +182,9 @@ isEquiv→isEmbedding e = λ _ _ → congEquiv (_ , e) .snd
 
 Equiv→Embedding : A ≃ B → A ↪ B
 Equiv→Embedding (f , isEquivF) = (f , isEquiv→isEmbedding isEquivF)
+
+id↪ : ∀ {ℓ} → (A : Type ℓ) → A ↪ A
+id↪ A = Equiv→Embedding (idEquiv A)
 
 iso→isEmbedding : ∀ {ℓ} {A B : Type ℓ}
   → (isom : Iso A B)
@@ -438,3 +443,24 @@ _≃Emb_ = EmbeddingIdentityPrinciple.f≃g
 
 EmbeddingIP : {B : Type ℓ} (f g : Embedding B ℓ') → f ≃Emb g ≃ (f ≡ g)
 EmbeddingIP = EmbeddingIdentityPrinciple.EmbeddingIP
+
+-- Cantor's theorem over discrete types
+↪ℙ : {A : Type ℓ} → Discrete A → A ↪ ℙ A
+↪ℙ {A = A} disc = fun , injEmbedding isSetℙ λ {x} {w} y → sym (H₃ w x (H₂ x w y))
+  where fun : A → ℙ A
+        fun a b with disc a b
+        ... | yes a≡b = Unit* , isPropUnit*
+        ... | no a≢b = ⊥* , isProp⊥*
+
+        H₁ : (a : A) → a ∈ (fun a)
+        H₁ a with disc a a
+        ... | yes a≡a = tt*
+        ... | no a≢a = rec (a≢a refl)
+
+        H₂ : (a b : A) → fun a ≡ fun b → a ∈ (fun b)
+        H₂ a b fa≡fb = transport (cong (fst ∘ (λ f → f a)) fa≡fb) (H₁ a)
+
+        H₃ : (a b : A) → b ∈ (fun a) → a ≡ b
+        H₃ a b b∈fa with disc a b
+        ... | yes a≡b = a≡b
+        ... | no a≢b = rec (lower b∈fa)
