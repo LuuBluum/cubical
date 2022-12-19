@@ -14,7 +14,7 @@ open import Cubical.Foundations.GroupoidLaws
 open import Cubical.Foundations.Path
 
 open import Cubical.Data.Sigma
-open import Cubical.Relation.Binary.Poset
+open import Cubical.Relation.Binary.Order.Poset
 
 open import Cubical.Structures.Axioms
 open import Cubical.Structures.Auto

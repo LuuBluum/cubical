@@ -4,10 +4,11 @@ module Cubical.Data.Sum.Properties where
 open import Cubical.Core.Everything
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.HLevels
+open import Cubical.Foundations.Transport
 open import Cubical.Functions.Embedding
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Isomorphism
-open import Cubical.Data.Empty
+open import Cubical.Data.Empty renaming (rec to ⊥-rec)
 open import Cubical.Data.Nat
 open import Cubical.Data.Sigma
 open import Cubical.Relation.Nullary
@@ -99,6 +100,12 @@ isOfHLevel⊎ n lA lB c c' =
     (⊎Path.decodeEncode c c')
     (⊎Path.isOfHLevelCover n lA lB c c')
 
+isProp⊎ : isProp A → isProp B → (A → B → ⊥) → isProp (A ⊎ B)
+isProp⊎ propA _ _ (inl x) (inl y) i = inl (propA x y i)
+isProp⊎ _ _ AB⊥ (inl x) (inr y) = ⊥-rec (AB⊥ x y)
+isProp⊎ _ _ AB⊥ (inr x) (inl y) = ⊥-rec (AB⊥ y x)
+isProp⊎ _ propB _ (inr x) (inr y) i = inr (propB x y i)
+
 isSet⊎ : isSet A → isSet B → isSet (A ⊎ B)
 isSet⊎ = isOfHLevel⊎ 0
 
@@ -159,14 +166,41 @@ leftInv ⊎-assoc-Iso (inr _)        = refl
 ⊎-assoc-≃ : (A ⊎ B) ⊎ C ≃ A ⊎ (B ⊎ C)
 ⊎-assoc-≃ = isoToEquiv ⊎-assoc-Iso
 
-⊎-⊥-Iso : Iso (A ⊎ ⊥) A
-fun ⊎-⊥-Iso (inl x) = x
-inv ⊎-⊥-Iso x       = inl x
-rightInv ⊎-⊥-Iso _      = refl
-leftInv ⊎-⊥-Iso (inl _) = refl
+⊎-IdR-⊥-Iso : Iso (A ⊎ ⊥) A
+fun ⊎-IdR-⊥-Iso (inl x) = x
+inv ⊎-IdR-⊥-Iso x       = inl x
+rightInv ⊎-IdR-⊥-Iso _      = refl
+leftInv ⊎-IdR-⊥-Iso (inl _) = refl
 
-⊎-⊥-≃ : A ⊎ ⊥ ≃ A
-⊎-⊥-≃ = isoToEquiv ⊎-⊥-Iso
+⊎-IdL-⊥-Iso : Iso (⊥ ⊎ A) A
+fun ⊎-IdL-⊥-Iso (inr x) = x
+inv ⊎-IdL-⊥-Iso x       = inr x
+rightInv ⊎-IdL-⊥-Iso _      = refl
+leftInv ⊎-IdL-⊥-Iso (inr _) = refl
+
+⊎-IdL-⊥*-Iso : ∀{ℓ} → Iso (⊥* {ℓ} ⊎ A) A
+fun ⊎-IdL-⊥*-Iso (inr x) = x
+inv ⊎-IdL-⊥*-Iso x       = inr x
+rightInv ⊎-IdL-⊥*-Iso _      = refl
+leftInv ⊎-IdL-⊥*-Iso (inr _) = refl
+
+⊎-IdR-⊥*-Iso : ∀{ℓ} → Iso (A ⊎ ⊥* {ℓ}) A
+fun ⊎-IdR-⊥*-Iso (inl x) = x
+inv ⊎-IdR-⊥*-Iso x       = inl x
+rightInv ⊎-IdR-⊥*-Iso _      = refl
+leftInv ⊎-IdR-⊥*-Iso (inl _) = refl
+
+⊎-IdR-⊥-≃ : A ⊎ ⊥ ≃ A
+⊎-IdR-⊥-≃ = isoToEquiv ⊎-IdR-⊥-Iso
+
+⊎-IdL-⊥-≃ : ⊥ ⊎ A ≃ A
+⊎-IdL-⊥-≃ = isoToEquiv ⊎-IdL-⊥-Iso
+
+⊎-IdR-⊥*-≃ : ∀{ℓ} → A ⊎ ⊥* {ℓ} ≃ A
+⊎-IdR-⊥*-≃ = isoToEquiv ⊎-IdR-⊥*-Iso
+
+⊎-IdL-⊥*-≃ : ∀{ℓ} → ⊥* {ℓ} ⊎ A ≃ A
+⊎-IdL-⊥*-≃ = isoToEquiv ⊎-IdL-⊥*-Iso
 
 Π⊎Iso : Iso ((x : A ⊎ B) → E x) (((a : A) → E (inl a)) × ((b : B) → E (inr b)))
 fun Π⊎Iso f .fst a = f (inl a)
@@ -188,12 +222,18 @@ rightInv Σ⊎Iso (inr (b , eb)) = refl
 leftInv Σ⊎Iso (inl a , ea) = refl
 leftInv Σ⊎Iso (inr b , eb) = refl
 
+×DistL⊎Iso : Iso (A × (B ⊎ C)) ((A × B) ⊎ (A × C))
+fun ×DistL⊎Iso (a , inl b) = inl (a , b)
+fun ×DistL⊎Iso (a , inr c) = inr (a , c)
+inv ×DistL⊎Iso (inl (a , b)) = a , inl b
+inv ×DistL⊎Iso (inr (a , c)) = a , inr c
+rightInv ×DistL⊎Iso (inl (a , b)) = refl
+rightInv ×DistL⊎Iso (inr (a , c)) = refl
+leftInv ×DistL⊎Iso (a , inl b) = refl
+leftInv ×DistL⊎Iso (a , inr c) = refl
+
 Π⊎≃ : ((x : A ⊎ B) → E x) ≃ ((a : A) → E (inl a)) × ((b : B) → E (inr b))
 Π⊎≃ = isoToEquiv Π⊎Iso
 
 Σ⊎≃ : (Σ (A ⊎ B) E) ≃ ((Σ A (λ a → E (inl a))) ⊎ (Σ B (λ b → E (inr b))))
 Σ⊎≃ = isoToEquiv Σ⊎Iso
-
-map-⊎ : (A → C) → (B → D) → A ⊎ B → C ⊎ D
-map-⊎ f _ (inl a) = inl (f a)
-map-⊎ _ g (inr b) = inr (g b)

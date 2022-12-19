@@ -14,6 +14,8 @@ private
 record IsCommSemiring {R : Type ℓ}
                   (0r 1r : R) (_+_ _·_ : R → R → R) : Type ℓ where
 
+  constructor iscommsemiring
+
   field
     +IsCommMonoid  : IsCommMonoid 0r _+_
     ·IsCommMonoid  : IsCommMonoid 1r _·_

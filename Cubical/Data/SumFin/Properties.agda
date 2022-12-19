@@ -17,7 +17,7 @@ open import Cubical.Data.Nat.Order
 import Cubical.Data.Fin as Fin
 import Cubical.Data.Fin.LehmerCode as LehmerCode
 open import Cubical.Data.SumFin.Base as SumFin
-open import Cubical.Data.Sum
+open import Cubical.Data.Sum renaming (map to map-⊎; ⊎-IdR-⊥-≃ to ⊎-⊥-≃)
 open import Cubical.Data.Sigma
 
 open import Cubical.HITs.PropositionalTruncation as Prop
