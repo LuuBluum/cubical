@@ -85,7 +85,8 @@ module BinaryRelation {ℓ ℓ' : Level} {A : Type ℓ} (R : Rel A A ℓ') where
   isStronglyConnected→isConnected strong a b _ = strong a b
 
   isIrrefl×isTrans→isAsym : isIrrefl × isTrans → isAsym
-  isIrrefl×isTrans→isAsym (irrefl , trans) a₀ a₁ Ra₀a₁ Ra₁a₀ = irrefl a₀ (trans a₀ a₁ a₀ Ra₀a₁ Ra₁a₀)
+  isIrrefl×isTrans→isAsym (irrefl , trans) a₀ a₁ Ra₀a₁ Ra₁a₀
+    = irrefl a₀ (trans a₀ a₁ a₀ Ra₀a₁ Ra₁a₀)
 
   IrreflKernel : Rel A A (ℓ-max ℓ ℓ')
   IrreflKernel a b = R a b × (¬ a ≡ b)
@@ -131,7 +132,8 @@ module BinaryRelation {ℓ ℓ' : Level} {A : Type ℓ} (R : Rel A A ℓ') where
   isPropValued = (a b : A) → isProp (R a b)
 
   isStronglyConnected×isPropValued→isRefl : isStronglyConnected × isPropValued → isRefl
-  isStronglyConnected×isPropValued→isRefl (strong , prop) a = ∥₁-rec (prop a a) (λ x → ⊎-rec (λ z → z) (λ z → z) x) (strong a a)
+  isStronglyConnected×isPropValued→isRefl (strong , prop) a
+    = ∥₁-rec (prop a a) (λ x → ⊎-rec (λ z → z) (λ z → z) x) (strong a a)
 
   isSetValued : Type (ℓ-max ℓ ℓ')
   isSetValued = (a b : A) → isSet (R a b)
@@ -226,8 +228,13 @@ isIrreflIrreflKernel _ _ (_ , ¬a≡a) = ¬a≡a refl
 isReflReflClosure : ∀{ℓ ℓ'} {A : Type ℓ} (R : Rel A A ℓ') → isRefl (ReflClosure R)
 isReflReflClosure _ _ = inr refl
 
-isConnectedStronglyConnectedIrreflKernel : ∀{ℓ ℓ'} {A : Type ℓ} (R : Rel A A ℓ') → isStronglyConnected R → isConnected (IrreflKernel R)
-isConnectedStronglyConnectedIrreflKernel R strong a b ¬a≡b = ∥₁-map (λ x → ⊎-rec (λ Rab → inl (Rab , ¬a≡b)) (λ Rba → inr (Rba , (λ b≡a → ¬a≡b (sym b≡a)))) x) (strong a b)
+isConnectedStronglyConnectedIrreflKernel : ∀{ℓ ℓ'} {A : Type ℓ} (R : Rel A A ℓ')
+                                         → isStronglyConnected R
+                                         → isConnected (IrreflKernel R)
+isConnectedStronglyConnectedIrreflKernel R strong a b ¬a≡b
+  = ∥₁-map (λ x → ⊎-rec (λ Rab → inl (Rab , ¬a≡b))
+                        (λ Rba → inr (Rba , (λ b≡a → ¬a≡b (sym b≡a)))) x)
+                        (strong a b)
 
 isSymSymKernel : ∀{ℓ ℓ'} {A : Type ℓ} (R : Rel A A ℓ') → isSym (SymKernel R)
 isSymSymKernel _ _ _ (Rab , Rba) = Rba , Rab
