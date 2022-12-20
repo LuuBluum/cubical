@@ -64,19 +64,25 @@ card = ∣_∣₂
 
 -- Now we define some arithmetic
 _+_ : Card {ℓ} → Card {ℓ} → Card {ℓ}
-_+_ = ∥₂-rec2 isSetCard λ (A , isSetA) (B , isSetB) → card ((A ⊎ B) , (isSet⊎ isSetA isSetB))
+_+_ = ∥₂-rec2 isSetCard λ (A , isSetA) (B , isSetB)
+                        → card ((A ⊎ B) , (isSet⊎ isSetA isSetB))
 
 _·_ : Card {ℓ} → Card {ℓ} → Card {ℓ}
-_·_ = ∥₂-rec2 isSetCard λ (A , isSetA) (B , isSetB) → card ((A × B) , (isSet× isSetA isSetB))
+_·_ = ∥₂-rec2 isSetCard λ (A , isSetA) (B , isSetB)
+                        → card ((A × B) , (isSet× isSetA isSetB))
 
 -- Cardinality is a commutative semiring
 module _ where
   private
     +Assoc : (A B C : Card {ℓ}) → A + (B + C) ≡ (A + B) + C
-    +Assoc = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _)) λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (sym (isoToPath ⊎-assoc-Iso)))
+    +Assoc = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _))
+                      λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                                  (sym (isoToPath ⊎-assoc-Iso)))
 
     ·Assoc : (A B C : Card {ℓ}) → A · (B · C) ≡ (A · B) · C
-    ·Assoc = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _)) λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (sym (isoToPath Σ-assoc-Iso)))
+    ·Assoc = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _))
+                      λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                                  (sym (isoToPath Σ-assoc-Iso)))
 
     +Semigroup : IsSemigroup {ℓ-suc ℓ} _+_
     +Semigroup = issemigroup isSetCard
@@ -87,16 +93,24 @@ module _ where
                              ·Assoc
 
     +IdR𝟘 : (A : Card {ℓ}) → A + 𝟘 ≡ A
-    +IdR𝟘 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _)) λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath ⊎-IdR-⊥*-Iso))
+    +IdR𝟘 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _))
+                    λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                            (isoToPath ⊎-IdR-⊥*-Iso))
 
     +IdL𝟘 : (A : Card {ℓ}) → 𝟘 + A ≡ A
-    +IdL𝟘 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _)) λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath ⊎-IdL-⊥*-Iso))
+    +IdL𝟘 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _))
+                    λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                            (isoToPath ⊎-IdL-⊥*-Iso))
 
     ·IdR𝟙 : (A : Card {ℓ}) → A · 𝟙 ≡ A
-    ·IdR𝟙 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _)) λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath rUnit*×Iso))
+    ·IdR𝟙 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _))
+                    λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                            (isoToPath rUnit*×Iso))
 
     ·IdL𝟙 : (A : Card {ℓ}) → 𝟙 · A ≡ A
-    ·IdL𝟙 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _)) λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath lUnit*×Iso))
+    ·IdL𝟙 = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _))
+                    λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                            (isoToPath lUnit*×Iso))
 
     +Monoid : IsMonoid {ℓ-suc ℓ} 𝟘 _+_
     +Monoid = ismonoid +Semigroup
@@ -109,10 +123,14 @@ module _ where
                        ·IdL𝟙
 
     +Comm : (A B : Card {ℓ}) → (A + B) ≡ (B + A)
-    +Comm = ∥₂-elim2 (λ _ _ → isProp→isSet (isSetCard _ _)) λ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath ⊎-swap-Iso))
+    +Comm = ∥₂-elim2 (λ _ _ → isProp→isSet (isSetCard _ _))
+                     λ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                               (isoToPath ⊎-swap-Iso))
 
     ·Comm : (A B : Card {ℓ}) → (A · B) ≡ (B · A)
-    ·Comm = ∥₂-elim2 (λ _ _ → isProp→isSet (isSetCard _ _)) λ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath Σ-swap-Iso))
+    ·Comm = ∥₂-elim2 (λ _ _ → isProp→isSet (isSetCard _ _))
+                     λ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                               (isoToPath Σ-swap-Iso))
 
     +CommMonoid : IsCommMonoid {ℓ-suc ℓ} 𝟘 _+_
     +CommMonoid = iscommmonoid +Monoid
@@ -123,10 +141,14 @@ module _ where
                                ·Comm
 
     ·LDist+ : (A B C : Card {ℓ}) → A · (B + C) ≡ (A · B) + (A · C)
-    ·LDist+ = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _)) λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath ×DistL⊎Iso))
+    ·LDist+ = ∥₂-elim3 (λ _ _ _ → isProp→isSet (isSetCard _ _))
+                       λ _ _ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                                   (isoToPath ×DistL⊎Iso))
 
     AnnihilL : (A : Card {ℓ}) → 𝟘 · A ≡ 𝟘
-    AnnihilL = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _)) λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet) (isoToPath (ΣEmpty*Iso λ _ → _)))
+    AnnihilL = ∥₂-elim (λ _ → isProp→isSet (isSetCard _ _))
+                       λ _ → cong ∣_∣₂ (Σ≡Prop (λ _ → isPropIsSet)
+                                               (isoToPath (ΣEmpty*Iso λ _ → _)))
 
   isCardCommSemiring : IsCommSemiring {ℓ-suc ℓ} 𝟘 𝟙 _+_ _·_
   isCardCommSemiring = iscommsemiring +CommMonoid
@@ -144,12 +166,18 @@ module _ where
   A ≲ B = fst (A ≲' B)
 
   isPreorder≲ : IsPreorder {ℓ-suc ℓ} _≲_
-  isPreorder≲ = ispreorder isSetCard
-                           (λ A B → prop A B)
-                           (λ A → ∥₂-elim (λ A → isProp→isSet (prop A A)) (λ (A , _) → ∣ id↪ A ∣₁) A)
-                           λ A B C → ∥₂-elim3 {B = λ x y z → x ≲ y → y ≲ z → x ≲ z} (λ x y z → isSetΠ2 λ _ _ → isProp→isSet (prop x z)) (λ (A , _) (B , _) (C , _) → ∥₁-map2 λ A↪B B↪C → compEmbedding B↪C A↪B) A B C
+  isPreorder≲
+    = ispreorder isSetCard
+                 (λ A B → prop A B)
+                 (λ A → ∥₂-elim (λ A → isProp→isSet (prop A A)) (λ (A , _) → ∣ id↪ A ∣₁) A)
+                 λ A B C → ∥₂-elim3 {B = λ x y z → x ≲ y → y ≲ z → x ≲ z}
+                                    (λ x y z → isSetΠ2 λ _ _ → isProp→isSet (prop x z))
+                                    (λ (A , _) (B , _) (C , _)
+                                      → ∥₁-map2 λ A↪B B↪C → compEmbedding B↪C A↪B) A B C
               where prop : BinaryRelation.isPropValued _≲_
                     prop a b = snd (a ≲' b)
 
 𝟘isLeast : ∀{ℓ} → isLeast _≲_ (λ _ → Unit* {ℓ}) (𝟘 {ℓ} , tt*)
-𝟘isLeast {ℓ} (x , _) = ∥₂-elim {B = λ x → 𝟘 ≲ x} (λ x → isProp→isSet (IsPreorder.is-prop-valued isPreorder≲ 𝟘 x)) (λ (a , _) → ∣ ⊥-rec* , (λ ()) ∣₁) x
+𝟘isLeast {ℓ} (x , _) = ∥₂-elim {B = λ x → 𝟘 ≲ x}
+                               (λ x → isProp→isSet (IsPreorder.is-prop-valued isPreorder≲ 𝟘 x))
+                               (λ (a , _) → ∣ ⊥-rec* , (λ ()) ∣₁) x
