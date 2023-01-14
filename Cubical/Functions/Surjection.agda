@@ -100,6 +100,12 @@ compSurjection (f , sur-f) (g , sur-g) =
                 (λ (b , gb≡c) → PT.rec isPropPropTrunc (λ (a , fa≡b) → ∣ a , (cong g fa≡b ∙ gb≡c) ∣₁) (sur-f b))
                 (sur-g c)
 
+-- Lawvere's version of Cantor's theorem
+FixedPoint : ∀ {A B : Type ℓ} → (A ↠ (A → B)) → (n : B → B) → ∃[ x ∈ B ] n(x) ≡ x
+FixedPoint {A = A} {B = B} (f , surf) n = map (λ (a , fib) → g a , sym (cong n (funExt⁻ fib a))) (surf g)
+  where g : A → B
+        g a = n ( f a a )
+
 -- Cantor's theorem, that no type surjects into its power set
 ¬↠ℙ : ∀ {A : Type ℓ} → ¬ (A ↠ ℙ A)
 ¬↠ℙ {A = A} (f , surf) = PT.rec isProp⊥ (λ (x , fx≡g) → H₁ x fx≡g (H₂ x fx≡g (H₁ x fx≡g))) (surf g)

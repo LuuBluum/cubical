@@ -444,23 +444,17 @@ _≃Emb_ = EmbeddingIdentityPrinciple.f≃g
 EmbeddingIP : {B : Type ℓ} (f g : Embedding B ℓ') → f ≃Emb g ≃ (f ≡ g)
 EmbeddingIP = EmbeddingIdentityPrinciple.EmbeddingIP
 
--- Cantor's theorem over discrete types
-↪ℙ : {A : Type ℓ} → Discrete A → A ↪ ℙ A
-↪ℙ {A = A} disc = fun , injEmbedding isSetℙ λ {x} {w} y → sym (H₃ w x (H₂ x w y))
+-- Cantor's theorem for sets
+↪ℙ : {A : Type ℓ} → isSet A → A ↪ ℙ A
+↪ℙ {A = A} setA = fun , (injEmbedding isSetℙ (λ {x} {w} y → sym (H₃ w x (H₂ x w y))))
   where fun : A → ℙ A
-        fun a b with disc a b
-        ... | yes a≡b = Unit* , isPropUnit*
-        ... | no a≢b = ⊥* , isProp⊥*
+        fun a b = (a ≡ b) , (setA a b)
 
         H₁ : (a : A) → a ∈ (fun a)
-        H₁ a with disc a a
-        ... | yes a≡a = tt*
-        ... | no a≢a = rec (a≢a refl)
+        H₁ a = refl
 
         H₂ : (a b : A) → fun a ≡ fun b → a ∈ (fun b)
         H₂ a b fa≡fb = transport (cong (fst ∘ (λ f → f a)) fa≡fb) (H₁ a)
 
         H₃ : (a b : A) → b ∈ (fun a) → a ≡ b
-        H₃ a b b∈fa with disc a b
-        ... | yes a≡b = a≡b
-        ... | no a≢b = rec (lower b∈fa)
+        H₃ a b b∈fa = b∈fa
