@@ -20,7 +20,7 @@ open import Cubical.Data.Sigma
 open import Cubical.Data.Unit
 open import Cubical.Functions.Fibration
 open import Cubical.Functions.FunExtEquiv
-open import Cubical.Relation.Nullary using (Discrete; yes; no; decRec; Dec)
+open import Cubical.Relation.Nullary using (Discrete; yes; no; decRec; Dec; ¬_)
 open import Cubical.Structures.Axioms
 
 open import Cubical.Reflection.StrictEquiv
@@ -446,15 +446,12 @@ EmbeddingIP = EmbeddingIdentityPrinciple.EmbeddingIP
 
 -- Cantor's theorem for sets
 ↪ℙ : {A : Type ℓ} → isSet A → A ↪ ℙ A
-↪ℙ {A = A} setA = fun , (injEmbedding isSetℙ (λ {x} {w} y → sym (H₃ w x (H₂ x w y))))
+↪ℙ {A = A} setA = fun , (injEmbedding isSetℙ (λ y → sym (H₃ (H₂ y))))
   where fun : A → ℙ A
         fun a b = (a ≡ b) , (setA a b)
 
-        H₁ : (a : A) → a ∈ (fun a)
-        H₁ a = refl
+        H₂ : {a b : A} → fun a ≡ fun b → a ∈ (fun b)
+        H₂ {a} fa≡fb = transport (cong (fst ∘ (λ f → f a)) fa≡fb) refl
 
-        H₂ : (a b : A) → fun a ≡ fun b → a ∈ (fun b)
-        H₂ a b fa≡fb = transport (cong (fst ∘ (λ f → f a)) fa≡fb) (H₁ a)
-
-        H₃ : (a b : A) → b ∈ (fun a) → a ≡ b
-        H₃ a b b∈fa = b∈fa
+        H₃ : {a b : A} → b ∈ (fun a) → a ≡ b
+        H₃ b∈fa = b∈fa
