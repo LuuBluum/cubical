@@ -117,7 +117,7 @@ compSurjection (f , sur-f) (g , sur-g) =
         g = λ x → (x ∉ f x , isProp¬ _)
 
         H₁ : {x : A} → f x ≡ g → x ∉ (f x)
-        H₁ {x} fx≡g x∈fx = transport (cong (fst ∘ λ a → a x) fx≡g) x∈fx x∈fx
+        H₁ {x} fx≡g x∈fx = transport (cong (fst ∘ (_$ x)) fx≡g) x∈fx x∈fx
 
         H₂ : {x : A} → f x ≡ g → x ∉ (f x) → x ∈ (f x)
-        H₂ {x} fx≡g x∈g = transport (cong (fst ∘ λ a → a x) (sym fx≡g)) x∈g
+        H₂ {x} fx≡g x∈g = transport (cong (fst ∘ (_$ x)) (sym fx≡g)) x∈g

@@ -451,7 +451,7 @@ EmbeddingIP = EmbeddingIdentityPrinciple.EmbeddingIP
         fun a b = (a ≡ b) , (setA a b)
 
         H₂ : {a b : A} → fun a ≡ fun b → a ∈ (fun b)
-        H₂ {a} fa≡fb = transport (cong (fst ∘ (λ f → f a)) fa≡fb) refl
+        H₂ {a} fa≡fb = transport (cong (fst ∘ (_$ a)) fa≡fb) refl
 
         H₃ : {a b : A} → b ∈ (fun a) → a ≡ b
         H₃ b∈fa = b∈fa
