@@ -455,3 +455,20 @@ EmbeddingIP = EmbeddingIdentityPrinciple.EmbeddingIP
 
         H₃ : {a b : A} → b ∈ (fun a) → a ≡ b
         H₃ b∈fa = b∈fa
+
+×Monotone↪ : ∀ {ℓa ℓb ℓc ℓd}
+                {A : Type ℓa} {B : Type ℓb} {C : Type ℓc} {D : Type ℓd}
+            → A ↪ C → B ↪ D → (A × B) ↪ (C × D)
+×Monotone↪ {A = A} {B = B} {C = C} {D = D} (f , embf) (g , embg)
+  = (map-× f g) , emb
+    where apmap : ∀ x y → x ≡ y → map-× f g x ≡ map-× f g y
+          apmap x y x≡y = ΣPathP (cong (f ∘ fst) x≡y , cong (g ∘ snd) x≡y)
+
+          equiv : ∀ x y → isEquiv (apmap x y)
+          equiv x y = ((invEquiv ΣPathP≃PathPΣ)
+                    ∙ₑ (≃-× ((cong f) , (embf (fst x) (fst y)))
+                             ((cong g) , (embg (snd x) (snd y))))
+                    ∙ₑ ΣPathP≃PathPΣ) .snd
+
+          emb : isEmbedding (map-× f g)
+          emb x y = equiv x y
