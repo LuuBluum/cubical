@@ -251,8 +251,8 @@ leftInv ×DistL⊎Iso (a , inr c) = refl
           = ((invEquiv LiftEquiv)
             ∙ₑ ((cong f) , (embf a₀ a₁))
             ∙ₑ LiftEquiv) .snd
-        equiv (inl a₀) (inr b₁) .equiv-proof y = ⊥.rec (lower y)
-        equiv (inr b₀) (inl a₁) .equiv-proof y = ⊥.rec (lower y)
+        equiv (inl a₀) (inr b₁) .equiv-proof ()
+        equiv (inr b₀) (inl a₁) .equiv-proof ()
         equiv (inr b₀) (inr b₁)
           = ((invEquiv LiftEquiv)
             ∙ₑ ((cong g) , (embg b₀ b₁))
