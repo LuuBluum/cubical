@@ -102,14 +102,19 @@ compSurjection (f , sur-f) (g , sur-g) =
                 (sur-g c)
 
 -- A slightly more specific form of Lawvere's fixed point theorem
-↠Fixpoint : ∀ {A : Type ℓ} {B : Type ℓ'} → (A ↠ (A → B)) → (n : B → B) → ∥ Fixpoint n ∥₁
-↠Fixpoint {A = A} {B = B} (f , surf) n = map (λ (a , fib) → g a , sym (cong n (funExt⁻ fib a))) (surf g)
+↠Fixpoint : ∀ {A : Type ℓ} {B : Type ℓ'}
+           → (A ↠ (A → B))
+           → (n : B → B)
+           → ∥ Fixpoint n ∥₁
+↠Fixpoint {A = A} {B = B} (f , surf) n
+  = map (λ (a , fib) → g a , sym (cong n (funExt⁻ fib a))) (surf g)
   where g : A → B
         g a = n ( f a a )
 
 -- Cantor's theorem, that no type surjects into its power set
-¬↠ℙ : ∀ {A : Type ℓ} → ¬ (A ↠ ℙ A)
-¬↠ℙ {A = A} (f , surf) = PT.rec isProp⊥ (λ (_ , fx≡g) → H₁ fx≡g (H₂ fx≡g (H₁ fx≡g))) (surf g)
+¬Surject-into-Powerset : ∀ {A : Type ℓ} → ¬ (A ↠ ℙ A)
+¬Surject-into-Powerset {A = A} (f , surf)
+  = PT.rec isProp⊥ (λ (_ , fx≡g) → H₁ fx≡g (H₂ fx≡g (H₁ fx≡g))) (surf g)
   where _∉_ : ∀ {A} → A → ℙ A → Type ℓ
         x ∉ A = ¬ (x ∈ A)
 
