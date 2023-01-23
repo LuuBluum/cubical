@@ -227,22 +227,22 @@ module _
       induced = Σ[ x ∈ A ] P x
 
     isMinimal : (n : induced) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
-    isMinimal (n , _) = ((x : induced) → ((fst x) ≲ n → n ≲ (fst x)))
+    isMinimal (n , _) = (x : induced) → (fst x) ≲ n → n ≲ (fst x)
 
     Minimal : Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
     Minimal = Σ[ n ∈ induced ] isMinimal n
 
     isMaximal : (n : induced) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
-    isMaximal (n , _) = ((x : induced) → (n ≲ (fst x) → (fst x) ≲ n))
+    isMaximal (n , _) = (x : induced) → n ≲ (fst x) → (fst x) ≲ n
 
     Maximal : Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
     Maximal = Σ[ n ∈ induced ] isMaximal n
 
     isLeast : (n : induced) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
-    isLeast (n , _) = ((x : induced) → n ≲ (fst x))
+    isLeast (n , _) = (x : induced) → n ≲ (fst x)
 
     isGreatest : (n : induced) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
-    isGreatest (n , _) = ((x : induced) → (fst x) ≲ n)
+    isGreatest (n , _) = (x : induced) → (fst x) ≲ n
 
     isLowerBound : (n : A) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
     isLowerBound n = (x : induced) → n ≲ (fst x)
@@ -250,26 +250,22 @@ module _
     isUpperBound : (n : A) → Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
     isUpperBound n = (x : induced) → (fst x) ≲ n
 
-    isLeast→isMinimal : ∀{n} → isLeast n → isMinimal n
-    isLeast→isMinimal isl x _ = isl x
+    isLeast→isMinimal : ∀ n → isLeast n → isMinimal n
+    isLeast→isMinimal _ isl x _ = isl x
 
-    isGreatest→isMaximal : ∀{n} → isGreatest n → isMaximal n
-    isGreatest→isMaximal isg x _ = isg x
+    isGreatest→isMaximal : ∀ n → isGreatest n → isMaximal n
+    isGreatest→isMaximal _ isg x _ = isg x
 
-    isLeast→isLowerBound : ∀{n} → isLeast n → isLowerBound (fst n)
-    isLeast→isLowerBound isl = isl
+    isLeast→isLowerBound : ∀ n → isLeast n → isLowerBound (fst n)
+    isLeast→isLowerBound _ isl = isl
 
-    isGreatest→isUpperBound : ∀{n} → isGreatest n → isUpperBound (fst n)
-    isGreatest→isUpperBound isg = isg
+    isGreatest→isUpperBound : ∀ n  → isGreatest n → isUpperBound (fst n)
+    isGreatest→isUpperBound _ isg = isg
 
   module _
     (P : A → Type ℓ'')
     (n : A)
     where
-
-    private
-      induced : Type (ℓ-max ℓ ℓ'')
-      induced = Σ[ x ∈ A ] P x
 
     isMaximalLowerBound : Type (ℓ-max (ℓ-max ℓ ℓ') ℓ'')
     isMaximalLowerBound
@@ -294,38 +290,34 @@ module _
   (prop : BinaryRelation.isPropValued _≲_)
   where
 
-  private
-    induced : Type (ℓ-max ℓ ℓ'')
-    induced = Σ[ x ∈ A ] P x
-
-  isPropIsMinimal : {n : induced} → isProp (isMinimal _≲_ P n)
+  isPropIsMinimal : ∀ {n} → isProp (isMinimal _≲_ P n)
   isPropIsMinimal {n , _} = isPropΠ2 λ (x , _) _ → prop n x
 
-  isPropIsMaximal : {n : induced} → isProp (isMaximal _≲_ P n)
+  isPropIsMaximal : ∀ {n} → isProp (isMaximal _≲_ P n)
   isPropIsMaximal {n , _} = isPropΠ2 λ (x , _) _ → prop x n
 
-  isPropIsLeast : {n : induced} → isProp (isLeast _≲_ P n)
+  isPropIsLeast : ∀ {n} → isProp (isLeast _≲_ P n)
   isPropIsLeast {n , _} = isPropΠ λ (x , _) → prop n x
 
-  isPropIsGreatest : {n : induced} → isProp (isGreatest _≲_ P n)
+  isPropIsGreatest : ∀ {n} → isProp (isGreatest _≲_ P n)
   isPropIsGreatest {n , _} = isPropΠ λ (x , _) → prop x n
 
-  isPropIsLowerBound : {n : A} → isProp (isLowerBound _≲_ P n)
+  isPropIsLowerBound : ∀ {n} → isProp (isLowerBound _≲_ P n)
   isPropIsLowerBound {n} = isPropΠ λ (x , _) → prop n x
 
-  isPropIsUpperBound : {n : A} → isProp (isUpperBound _≲_ P n)
+  isPropIsUpperBound : ∀ {n} → isProp (isUpperBound _≲_ P n)
   isPropIsUpperBound {n} = isPropΠ λ (x , _) → prop x n
 
-  isPropIsMaximalLowerBound : {n : A} → isProp (isMaximalLowerBound _≲_ P n)
+  isPropIsMaximalLowerBound : ∀ {n} → isProp (isMaximalLowerBound _≲_ P n)
   isPropIsMaximalLowerBound {n} = isPropΣ isPropIsLowerBound λ _ → isPropΠ2 λ (x , _) _ → prop x n
 
-  isPropIsMinimalUpperBound : {n : A} → isProp (isMinimalUpperBound _≲_ P n)
+  isPropIsMinimalUpperBound : ∀ {n} → isProp (isMinimalUpperBound _≲_ P n)
   isPropIsMinimalUpperBound {n} = isPropΣ isPropIsUpperBound λ _ → isPropΠ2 λ (x , _) _ → prop n x
 
-  isPropIsInfimum : {n : A} → isProp (isInfimum _≲_ P n)
+  isPropIsInfimum : ∀ {n} → isProp (isInfimum _≲_ P n)
   isPropIsInfimum {n} = isPropΣ isPropIsLowerBound λ _ → isPropΠ λ (x , _) → prop x n
 
-  isPropIsSupremum : {n : A} → isProp (isSupremum _≲_ P n)
+  isPropIsSupremum : ∀ {n} → isProp (isSupremum _≲_ P n)
   isPropIsSupremum {n} = isPropΣ isPropIsUpperBound λ _ → isPropΠ λ (x , _) → prop n x
 
 module _
@@ -337,10 +329,6 @@ module _
   module _
     {P : A → Type ℓ''}
     where
-
-    private
-      induced : Type (ℓ-max ℓ ℓ'')
-      induced = Σ[ x ∈ A ] P x
 
     isLeast→ContrMinimal : ∀ n → isLeast _≤_ P n  → ∀ m → isMinimal _≤_ P m → (fst n) ≡ (fst m)
     isLeast→ContrMinimal (n , Pn) isln (m , Pm) ismm
@@ -362,17 +350,19 @@ module _
     {P : A → Type ℓ''}
     where
 
-    private
-      induced : Type (ℓ-max ℓ ℓ'')
-      induced = Σ[ x ∈ A ] P x
-
-    isInfimumUnique : ∀{n m} → isInfimum _≤_ P n → isInfimum _≤_ P m → n ≡ m
-    isInfimumUnique {n} {m} (isln , infn) (islm , infm)
+    isInfimumUnique : ∀ n m → isInfimum _≤_ P n → isInfimum _≤_ P m → n ≡ m
+    isInfimumUnique n m (isln , infn) (islm , infm)
       = isGreatestUnique (n , isln) (m , islm) infn infm
 
-    isSupremumUnique : ∀{n m} → isSupremum _≤_ P n → isSupremum _≤_ P m → n ≡ m
-    isSupremumUnique {n} {m} (isun , supn) (isum , supm)
+    isSupremumUnique : ∀ n m → isSupremum _≤_ P n → isSupremum _≤_ P m → n ≡ m
+    isSupremumUnique n m (isun , supn) (isum , supm)
       = isLeastUnique (n , isun) (m , isum) supn supm
+
+    isGreatest→isSupremum : ∀ n → isGreatest _≤_ P n → isSupremum _≤_ P (fst n)
+    isGreatest→isSupremum n grn = (isGreatest→isUpperBound _≤_ P n grn) , (λ x → snd x n)
+
+    isLeast→isInfimum : ∀ n → isLeast _≤_ P n → isInfimum _≤_ P (fst n)
+    isLeast→isInfimum n lsn = (isLeast→isLowerBound _≤_ P n lsn) , (λ x → snd x n)
 
 module _
   {A : Type ℓ}
@@ -381,10 +371,6 @@ module _
   (prop : BinaryRelation.isPropValued _≤_)
   (conn : BinaryRelation.isStronglyConnected _≤_)
   where
-
-  private
-    induced : Type (ℓ-max ℓ ℓ'')
-    induced = Σ[ x ∈ A ] P x
 
   isMinimal→isLeast : ∀ n → isMinimal _≤_ P n → isLeast _≤_ P n
   isMinimal→isLeast (n , p) ism (m , q)
