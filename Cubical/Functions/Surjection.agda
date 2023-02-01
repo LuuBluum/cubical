@@ -112,8 +112,8 @@ compSurjection (f , sur-f) (g , sur-g) =
         g a = n ( f a a )
 
 -- Cantor's theorem, that no type surjects into its power set
-¬Surject-into-Powerset : ∀ {A : Type ℓ} → ¬ (A ↠ ℙ A)
-¬Surject-into-Powerset {A = A} (f , surf)
+¬Surjection-into-Powerset : ∀ {A : Type ℓ} → ¬ (A ↠ ℙ A)
+¬Surjection-into-Powerset {A = A} (f , surf)
   = PT.rec isProp⊥ (λ (_ , fx≡g) → H₁ fx≡g (H₂ fx≡g (H₁ fx≡g))) (surf g)
   where _∉_ : ∀ {A} → A → ℙ A → Type ℓ
         x ∉ A = ¬ (x ∈ A)
