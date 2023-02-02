@@ -8,6 +8,9 @@ open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Equiv.Fiberwise
+
+open import Cubical.Functions.Embedding
+
 open import Cubical.Data.Empty renaming (rec to ⊥-rec)
 open import Cubical.Data.Sigma
 open import Cubical.Data.Sum renaming (rec to ⊎-rec)
@@ -105,16 +108,19 @@ module BinaryRelation {ℓ ℓ' : Level} {A : Type ℓ} (R : Rel A A ℓ') where
 
   module _
     {ℓ'' : Level}
-    (P : A → Type ℓ'')
+    (P : Embedding A ℓ'')
 
     where
 
     private
-      induced : Type (ℓ-max ℓ ℓ'')
-      induced = Σ[ x ∈ A ] P x
+      subtype : Type ℓ''
+      subtype = (fst P)
 
-    InducedRelation : Rel induced induced ℓ'
-    InducedRelation (a , _) (b , _) = R a b
+      toA : subtype → A
+      toA = fst (snd P)
+
+    InducedRelation : Rel subtype subtype ℓ'
+    InducedRelation a b = R (toA a) (toA b)
 
   record isEquivRel : Type (ℓ-max ℓ ℓ') where
     constructor equivRel
