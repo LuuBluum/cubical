@@ -223,15 +223,15 @@ rightInv Σ⊎Iso (inr (b , eb)) = refl
 leftInv Σ⊎Iso (inl a , ea) = refl
 leftInv Σ⊎Iso (inr b , eb) = refl
 
-×DistL⊎Iso : Iso (A × (B ⊎ C)) ((A × B) ⊎ (A × C))
-fun ×DistL⊎Iso (a , inl b) = inl (a , b)
-fun ×DistL⊎Iso (a , inr c) = inr (a , c)
-inv ×DistL⊎Iso (inl (a , b)) = a , inl b
-inv ×DistL⊎Iso (inr (a , c)) = a , inr c
-rightInv ×DistL⊎Iso (inl (a , b)) = refl
-rightInv ×DistL⊎Iso (inr (a , c)) = refl
-leftInv ×DistL⊎Iso (a , inl b) = refl
-leftInv ×DistL⊎Iso (a , inr c) = refl
+×DistR⊎Iso : Iso (A × (B ⊎ C)) ((A × B) ⊎ (A × C))
+fun ×DistR⊎Iso (a , inl b) = inl (a , b)
+fun ×DistR⊎Iso (a , inr c) = inr (a , c)
+inv ×DistR⊎Iso (inl (a , b)) = a , inl b
+inv ×DistR⊎Iso (inr (a , c)) = a , inr c
+rightInv ×DistR⊎Iso (inl (a , b)) = refl
+rightInv ×DistR⊎Iso (inr (a , c)) = refl
+leftInv ×DistR⊎Iso (a , inl b) = refl
+leftInv ×DistR⊎Iso (a , inr c) = refl
 
 Π⊎≃ : ((x : A ⊎ B) → E x) ≃ ((a : A) → E (inl a)) × ((b : B) → E (inr b))
 Π⊎≃ = isoToEquiv Π⊎Iso
