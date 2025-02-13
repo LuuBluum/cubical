@@ -18,6 +18,8 @@ open import Cubical.HITs.PropositionalTruncation as ∥₁
 open import Cubical.Relation.Binary.Order.Poset.Base
 open import Cubical.Relation.Binary.Order.Poset.Properties
 
+open import Cubical.Relation.Binary.Order.Proset.Properties
+
 
 private
   variable
@@ -169,6 +171,12 @@ module _
       = equivFun (principalDownsetMembership z y)
                  (trans z x y (invEq (principalDownsetMembership z x) z∈x↓) x≤y)
 
+    principalDownsetHasGreatest : ∀ x → isGreatest (isPoset→isProset is) (principalDownset x) (x , rfl x)
+    principalDownsetHasGreatest x (y , y≤x) = y≤x
+
+    principalUpsetHasLeast : ∀ x → isLeast (isPoset→isProset is) (principalUpset x) (x , rfl x)
+    principalUpsetHasLeast x (y , x≤y) = x≤y
+
     module _
       (S : Embedding ⟨ P ⟩ (ℓ-max ℓ ℓ'))
       where
@@ -211,22 +219,60 @@ module _
                                    (equivFun (principalUpsetMembership x x) (rfl x)))
 
         isPrincipalDownset→isDownset : isPrincipalDownset → (isDownset S)
-        isPrincipalDownset→isDownset (x , p) = transport⁻ (cong isDownset p) (isDownsetPrincipalDownset x)
+        isPrincipalDownset→isDownset (x , p)
+          = transport⁻ (cong isDownset p) (isDownsetPrincipalDownset x)
 
         isPrincipalUpset→isUpset : isPrincipalUpset → (isUpset S)
-        isPrincipalUpset→isUpset (x , p) = transport⁻ (cong isUpset p) (isUpsetPrincipalUpset x)
+        isPrincipalUpset→isUpset (x , p)
+          = transport⁻ (cong isUpset p) (isUpsetPrincipalUpset x)
+
+    isPrincipalDownset→hasGreatest : (S : Embedding ⟨ P ⟩ (ℓ-max ℓ ℓ'))
+                                   → isPrincipalDownset S
+                                   → Greatest (isPoset→isProset is) S
+    isPrincipalDownset→hasGreatest _ (x , S≡x↓)
+      = transport⁻ (cong (Greatest (isPoset→isProset is)) S≡x↓)
+                   ((x , rfl x) , principalDownsetHasGreatest x)
+
+    isDownsetWithGreatest→isPrincipalDownset : (S : Embedding ⟨ P ⟩ (ℓ-max ℓ ℓ'))
+                                             → isDownset S
+                                             → Greatest (isPoset→isProset is) S
+                                             → isPrincipalDownset S
+    isDownsetWithGreatest→isPrincipalDownset (S , f , emb) down (x , grt)
+      = f x , isAntisym⊆ₑ (S , f , emb)
+                          (principalDownset (f x))
+                          (λ y (w , fw≡y) → equivFun (principalDownsetMembership y (f x))
+                                                     (subst (_≤ f x) fw≡y (grt w)))
+                           λ y ((w , w≤fx) , w≡y) → down x y (subst (_≤ f x) w≡y w≤fx)
+
+    isPrincipalUpset→hasLeast : (S : Embedding ⟨ P ⟩ (ℓ-max ℓ ℓ'))
+                              → isPrincipalUpset S
+                              → Least (isPoset→isProset is) S
+    isPrincipalUpset→hasLeast _ (x , S≡x↑)
+      = transport⁻ (cong (Least (isPoset→isProset is)) S≡x↑)
+                   ((x , rfl x) , principalUpsetHasLeast x)
+
+    isUpsetWithLeast→isPrincipalUpset : (S : Embedding ⟨ P ⟩ (ℓ-max ℓ ℓ'))
+                                      → isUpset S
+                                      → Least (isPoset→isProset is) S
+                                      → isPrincipalUpset S
+    isUpsetWithLeast→isPrincipalUpset (S , f , emb) up (x , lst)
+      = f x , isAntisym⊆ₑ (S , f , emb)
+                          (principalUpset (f x))
+                          (λ y (w , fw≡y) → equivFun (principalUpsetMembership (f x) y)
+                                                     (subst (f x ≤_) fw≡y (lst w)))
+                           λ y ((w , fx≤w) , w≡y) → up x y (subst (f x ≤_) w≡y fx≤w)
 
 module PosetDownset (P' : Poset ℓ ℓ') where
   private P = ⟨ P' ⟩
   open PosetStr (snd P')
 
-  ↓ : P → Type (ℓ-max ℓ ℓ')
-  ↓ u = principalDownset P' u .fst
+  _↓ : P → Type (ℓ-max ℓ ℓ')
+  u ↓ = principalDownset P' u .fst
 
-  ↓ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
-  fst (↓ᴾ u) = ↓ u
-  PosetStr._≤_ (snd (↓ᴾ u)) v w = v .fst ≤ w .fst
-  PosetStr.isPoset (snd (↓ᴾ u)) =
+  _↓ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
+  fst (u ↓ᴾ) = u ↓
+  PosetStr._≤_ (snd (u ↓ᴾ)) v w = v .fst ≤ w .fst
+  PosetStr.isPoset (snd (u ↓ᴾ)) =
     isPosetInduced
       (PosetStr.isPoset (snd P'))
        _
@@ -236,13 +282,13 @@ module PosetUpset (P' : Poset ℓ ℓ') where
   private P = ⟨ P' ⟩
   open PosetStr (snd P')
 
-  ↑ : P → Type (ℓ-max ℓ ℓ')
-  ↑ u = principalUpset P' u .fst
+  _↑ : P → Type (ℓ-max ℓ ℓ')
+  u ↑ = principalUpset P' u .fst
 
-  ↑ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
-  fst (↑ᴾ u) = principalUpset P' u .fst
-  PosetStr._≤_ (snd (↑ᴾ u)) v w = v .fst ≤ w .fst
-  PosetStr.isPoset (snd (↑ᴾ u)) =
+  _↑ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
+  fst (u ↑ᴾ) = u ↑
+  PosetStr._≤_ (snd (u ↑ᴾ)) v w = v .fst ≤ w .fst
+  PosetStr.isPoset (snd (u ↑ᴾ)) =
     isPosetInduced
       (PosetStr.isPoset (snd P'))
        _
