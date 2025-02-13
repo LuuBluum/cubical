@@ -139,7 +139,8 @@ module _
                       → IsAntitone (snd A) f (snd B)
     IsAntitone.inv≤ (DualAntitoneDual' is) x y = IsAntitone.inv≤ is y x
 
-IsPosetEquiv→IsIsotone : (P S : Poset ℓ ℓ')
+IsPosetEquiv→IsIsotone : (P : Poset ℓ₀ ℓ₀')
+                         (S : Poset ℓ₁ ℓ₁')
                          (e : ⟨ P ⟩ ≃ ⟨ S ⟩)
                        → IsPosetEquiv (snd P) e (snd S)
                        → IsIsotone (snd P) (equivFun e) (snd S)
@@ -202,6 +203,21 @@ module _
               pre = fib .fst .snd
               fiba = fib .snd
 
+module _
+  (P : Poset ℓ₀ ℓ₀')
+  (S : Poset ℓ₁ ℓ₁')
+  (f : ⟨ P ⟩ → ⟨ S ⟩)
+  where
+    private
+      _≤P_ = PosetStr._≤_ (snd P)
+      _≤S_ = PosetStr._≤_ (snd S)
+
+    hasResidual : Type _
+    hasResidual = IsIsotone (snd P) f (snd S) ×
+                  (Σ[ g ∈ (⟨ S ⟩ → ⟨ P ⟩) ] (IsIsotone (snd S) g (snd P) ×
+                                            (∀ x → x ≤P (g ∘ f) x) ×
+                                            (∀ x → (f ∘ g) x ≤S x)))
+
 -- The next part requires our posets to operate over the same universes
 module _
   (P S : Poset ℓ ℓ')
@@ -228,14 +244,8 @@ module _
     isResiduated : Type _
     isResiduated = ∀ y → isPrincipalDownset P (f ⃖ (principalDownset S y))
 
-    hasResidual : Type (ℓ-max ℓ ℓ')
-    hasResidual = (IsIsotone (snd P) f (snd S)) ×
-                   (Σ[ g ∈ (⟨ S ⟩ → ⟨ P ⟩) ] (IsIsotone (snd S) g (snd P) ×
-                                             (∀ x → x ≤P (g ∘ f) x) ×
-                                             (∀ x → (f ∘ g) x ≤S x)))
-
     isResiduated→hasResidual : isResiduated
-                             → hasResidual
+                             → hasResidual P S f
     isResiduated→hasResidual down = isotonef , g , isotoneg , g∘f , f∘g
       where isotonef : IsIsotone (snd P) f (snd S)
             isotonef = PreimagePrincipalDownsetIsDownset→IsIsotone f
@@ -275,7 +285,7 @@ module _
                     gy∈pre = subst (g y ∈ₑ_) (sym (down y .snd))
                                    (equivFun (principalDownsetMembership P (g y) (g y)) (rflP (g y)))
 
-    hasResidual→isResiduated : hasResidual
+    hasResidual→isResiduated : hasResidual P S f
                              → isResiduated
     hasResidual→isResiduated (isf , g , isg , g∘f , f∘g) y
       = (g y) , (equivFun (EmbeddingIP _ _)
@@ -296,7 +306,7 @@ module _
     isPropIsResiduated : isProp isResiduated
     isPropIsResiduated = isPropΠ λ _ → isPropIsPrincipalDownset P _
 
-    residualUnique : (p q : hasResidual)
+    residualUnique : (p q : hasResidual P S f)
                    → p .snd .fst ≡ q .snd .fst
     residualUnique (isf₀ , g  , isg  , g∘f  , f∘g)
                    (isf₁ , g* , isg* , g*∘f , f∘g*)
@@ -309,7 +319,7 @@ module _
                          g*≤g x = transP (g* x) ((g ∘ f) (g* x)) (g x) (g∘f (g* x))
                                          (IsIsotone.pres≤ isg (f (g* x)) x (f∘g* x))
 
-    isPropHasResidual : isProp hasResidual
+    isPropHasResidual : isProp (hasResidual P S f)
     isPropHasResidual p q = ≡-× (isPropIsIsotone _ f _ _ _)
                                  (Σ≡Prop (λ g → isProp× (isPropIsIsotone _ g _)
                                                 (isProp× (isPropΠ (λ x → propP x (g (f x))))
@@ -331,17 +341,17 @@ module _
                                                    (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
                                                    (grt y)
 
-    residual : hasResidual → ⟨ S ⟩ → ⟨ P ⟩
+    residual : (hasResidual P S f) → ⟨ S ⟩ → ⟨ P ⟩
     residual (_ , g , _) = g
 
-    AbsorbResidual : (res : hasResidual)
+    AbsorbResidual : (res : hasResidual P S f)
                    → f ∘ (residual res) ∘ f ≡ f
     AbsorbResidual (isf , f⁺ , _ , f⁺∘f , f∘f⁺)
       = funExt λ x → antiS ((f ∘ f⁺ ∘ f) x) (f x)
                            (f∘f⁺ (f x))
                            (IsIsotone.pres≤ isf x (f⁺ (f x)) (f⁺∘f x))
 
-    ResidualAbsorb : (res : hasResidual)
+    ResidualAbsorb : (res : hasResidual P S f)
                    → (residual res) ∘ f ∘ (residual res) ≡ (residual res)
     ResidualAbsorb (_ , f⁺ , isf⁺ , f⁺∘f , f∘f⁺)
       = funExt λ x → antiP ((f⁺ ∘ f ∘ f⁺) x) (f⁺ x)
@@ -1150,7 +1160,8 @@ isBicomplete→ClosureOperatorHasResidual E F ((f , (isf , f≡f∘f , x≤fx) ,
         f∘f⁺ : ∀ x → (f ∘ f⁺) x ≤ x
         f∘f⁺ x = subst (_≤ x) (f⁺≡f∘f⁺ x) (f⁺x≤x x)
 
-IsPosetEquiv→isResiduatedBijection : (P S : Poset ℓ ℓ')
+IsPosetEquiv→isResiduatedBijection : (P : Poset ℓ₀ ℓ₀')
+                                     (S : Poset ℓ₁ ℓ₁')
                                      (e : ⟨ P ⟩ ≃ ⟨ S ⟩)
                                    → IsPosetEquiv (snd P) e (snd S)
                                    → hasResidual P S (equivFun e)
