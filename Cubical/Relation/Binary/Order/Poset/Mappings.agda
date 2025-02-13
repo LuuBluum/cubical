@@ -447,6 +447,39 @@ Involution→EqualResidual P f res inv
          cong (f ∘_) inv)
   where f⁺ = res .snd .fst
 
+ResidualAntitone : (P : Poset ℓ ℓ')
+                 → (f g : ⟨ P ⟩ → ⟨ P ⟩)
+                 → (resf : hasResidual P P f)
+                 → (resg : hasResidual P P g)
+                 → (∀ x → PosetStr._≤_ (snd P) (f x) (g x))
+                 ≃ (∀ x → PosetStr._≤_ (snd P) (residual P P g resg x) (residual P P f resf x))
+ResidualAntitone P f g (isf , f⁺ , isf⁺ , f⁺∘f , f∘f⁺) (isg , g⁺ , isg⁺ , g⁺∘g , g∘g⁺)
+  = propBiimpl→Equiv (isPropΠ (λ _ → prop _ _)) (isPropΠ (λ _ → prop _ _))
+                     (λ f≤g x → trans (g⁺ x)
+                                      (f⁺ (f (g⁺ x)))
+                                      (f⁺ x)
+                                      (f⁺∘f (g⁺ x))
+                                      (IsIsotone.pres≤ isf⁺ (f (g⁺ x)) x
+                                                       (trans (f (g⁺ x))
+                                                              (g (g⁺ x))
+                                                               x
+                                                              (f≤g (g⁺ x))
+                                                              (g∘g⁺ x))))
+                      λ g⁺≤f⁺ x → trans (f x)
+                                        (f (f⁺ (g x)))
+                                        (g x)
+                                        (IsIsotone.pres≤ isf x (f⁺ (g x))
+                                                         (trans x
+                                                               (g⁺ (g x))
+                                                               (f⁺ (g x))
+                                                               (g⁺∘g x)
+                                                               (g⁺≤f⁺ (g x))))
+                                                         (f∘f⁺ (g x))
+  where pos = PosetStr.isPoset (snd P)
+        _≤_ = PosetStr._≤_ (snd P)
+        prop = IsPoset.is-prop-valued pos
+        trans = IsPoset.is-trans pos
+
 Res : Poset ℓ ℓ' → Semigroup (ℓ-max ℓ ℓ')
 fst (Res E) = Σ[ f ∈ (⟨ E ⟩ → ⟨ E ⟩) ] hasResidual E E f
 SemigroupStr._·_ (snd (Res E)) (f , resf) (g , resg)
