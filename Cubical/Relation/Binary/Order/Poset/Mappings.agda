@@ -183,7 +183,7 @@ module _
                                          refl ∣₁) ,
                      refl }) inPrex
 
-    PreimagePrincipalDownsetIsDownset→IsIsotone : (∀ x → isDownset P (f ⃖ (principalDownset S x)))
+    PreimagePrincipalDownsetIsDownset→IsIsotone : (∀ x → isDownset P (f ⃖ principalDownset S x))
                                                 → IsIsotone (snd P) f (snd S)
     IsIsotone.pres≤ (PreimagePrincipalDownsetIsDownset→IsIsotone down) y x y≤x
       = ∥₁.rec (propS _ _) (λ { ((b , b≤fx) , fibb) → subst (_≤S f x) (fibb ∙ cong f fiba) b≤fx }) pre
@@ -192,7 +192,7 @@ module _
               pre = fib .fst .snd
               fiba = fib .snd
 
-    PreimagePrincipalUpsetIsUpset→IsIsotone : (∀ x → isUpset P (f ⃖ (principalUpset S x)))
+    PreimagePrincipalUpsetIsUpset→IsIsotone : (∀ x → isUpset P (f ⃖ principalUpset S x))
                                             → IsIsotone (snd P) f (snd S)
     IsIsotone.pres≤ (PreimagePrincipalUpsetIsUpset→IsIsotone up) x y x≤y
       = ∥₁.rec (propS _ _) (λ { ((b , fx≤b) , fibb) → subst (f x ≤S_) (fibb ∙ cong f fiba) fx≤b }) pre
@@ -240,7 +240,7 @@ module _
             isotonef = PreimagePrincipalDownsetIsDownset→IsIsotone f
                        λ x → isPrincipalDownset→isDownset P (f ⃖ principalDownset S x) (down x)
 
-            isotonef⃖ : ∀ x y → x ≤S y → (f ⃖ (principalDownset S x)) ⊆ₑ (f ⃖ (principalDownset S y))
+            isotonef⃖ : ∀ x y → x ≤S y → (f ⃖ principalDownset S x) ⊆ₑ (f ⃖ principalDownset S y)
             isotonef⃖ x y x≤y z ((a , pre) , fiba)
               = ∥₁.rec (isProp∈ₑ z (f ⃖ principalDownset S y))
                        (λ { ((b , b≤x) , fibb) → (a , ∣ (b , (transS b x y b≤x x≤y)) , fibb ∣₁) , fiba }) pre
@@ -270,7 +270,7 @@ module _
                            (λ { ((a , a≤y) , fib) →
                                 subst (_≤S y) (fib ∙ cong f (gy∈pre .snd)) a≤y })
                            (gy∈pre .fst .snd)
-              where gy∈pre : g y ∈ₑ (f ⃖ (principalDownset S y))
+              where gy∈pre : g y ∈ₑ (f ⃖ principalDownset S y)
                     gy∈pre = subst (g y ∈ₑ_) (sym (down y .snd))
                                    (equivFun (principalDownsetMembership P (g y) (g y)) (rflP (g y)))
 
@@ -314,6 +314,21 @@ module _
                                                 (isProp× (isPropΠ (λ x → propP x (g (f x))))
                                                          (isPropΠ λ x → propS (f (g x)) x)))
                                           (residualUnique p q))
+
+    hasDownsetGreatest : Type (ℓ-max ℓ ℓ')
+    hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ principalDownset S y)
+
+    isPropHasDownsetGreatest : isProp hasDownsetGreatest
+    isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ principalDownset S y}
+
+    isResiduated→hasDownsetGreatest : isResiduated → hasDownsetGreatest
+    isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ principalDownset S y) (res y)
+
+    hasDownsetGreatest→IsIsotone→isResiduated : hasDownsetGreatest → IsIsotone (snd P) f (snd S) → isResiduated
+    hasDownsetGreatest→IsIsotone→isResiduated grt is y
+      = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ principalDownset S y)
+                                                   (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
+                                                   (grt y)
 
     residual : hasResidual → ⟨ S ⟩ → ⟨ P ⟩
     residual (_ , g , _) = g
