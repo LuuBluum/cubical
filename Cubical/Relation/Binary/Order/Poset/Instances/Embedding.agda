@@ -54,24 +54,12 @@ isMeet∩ₑ X Y Z = propBiimpl→Equiv (isProp⊆ₑ Z (X ∩ₑ Y))
                                        (x , ((Z⊆X x x∈Z) ,
                                              (Z⊆Y x x∈Z))) , refl }
 
-isMeetSemipseudolatticeEmbeddingPoset : {A : Type ℓ}
-                                      → isMeetSemipseudolattice (EmbeddingPoset A ℓ)
-isMeetSemipseudolatticeEmbeddingPoset X Y
-  = X ∩ₑ Y , isMeet∩ₑ X Y
-
 isGreatestEmbeddingPosetTotal : {A : Type ℓ}
                               → isGreatest (isPoset→isProset isPoset⊆ₑ)
                                            (Embedding A ℓ , id↪ (Embedding A ℓ))
                                            (A , (id↪ A))
 isGreatestEmbeddingPosetTotal _ x _
   = x , refl
-
-isMeetSemilatticeEmbeddingPoset : {A : Type ℓ}
-                                → isMeetSemilattice (EmbeddingPoset A ℓ)
-isMeetSemilatticeEmbeddingPoset {A = A}
-  = isMeetSemipseudolatticeEmbeddingPoset ,
-    (A , (id↪ A)) ,
-    isGreatestEmbeddingPosetTotal
 
 isJoin∪ₑ : {A : Type ℓ}
            (X Y : Embedding A ℓ)
@@ -93,26 +81,9 @@ isJoin∪ₑ X Y Z
                                                        (Y⊆Z _ a∈Y)))
                                  (x∈X∪Y .fst .snd) }
 
-isJoinSemipseudolatticeEmbeddingPoset : {A : Type ℓ}
-                                      → isJoinSemipseudolattice (EmbeddingPoset A ℓ)
-isJoinSemipseudolatticeEmbeddingPoset X Y
-  = X ∪ₑ Y , isJoin∪ₑ X Y
-
 isLeast∅ : {A : Type ℓ}
          → isLeast (isPoset→isProset isPoset⊆ₑ) (Embedding A ℓ , id↪ (Embedding A ℓ)) ((Σ[ x ∈ A ] ⊥) , EmbeddingΣProp λ _ → isProp⊥)
 isLeast∅ _ _ ((_ , ()) , _)
-
-isJoinSemilatticeEmbeddingPoset : {A : Type ℓ}
-                                → isJoinSemilattice (EmbeddingPoset A ℓ)
-isJoinSemilatticeEmbeddingPoset {A = A}
-  = isJoinSemipseudolatticeEmbeddingPoset ,
-    ((Σ[ x ∈ A ] ⊥) , EmbeddingΣProp λ _ → isProp⊥) ,
-    isLeast∅
-
-isLatticeEmbeddingPoset : {A : Type ℓ}
-                        → isLattice (EmbeddingPoset A ℓ)
-isLatticeEmbeddingPoset = isMeetSemilatticeEmbeddingPoset ,
-                          isJoinSemilatticeEmbeddingPoset
 
 isInfimum⋂ₑ : {A : Type ℓ}
                {I : Type ℓ}
@@ -121,11 +92,6 @@ isInfimum⋂ₑ : {A : Type ℓ}
 fst (isInfimum⋂ₑ P) i y ((a , ∀i) , a≡y) = subst (_∈ₑ P i) a≡y (∀i i)
 snd (isInfimum⋂ₑ P) (X , lwr) y y∈X = (y , λ i → lwr i y y∈X) , refl
 
-isMeetCompleteSemipseudolatticeEmbeddingPoset : {A : Type ℓ}
-                                              → isMeetCompleteSemipseudolattice (EmbeddingPoset A ℓ)
-isMeetCompleteSemipseudolatticeEmbeddingPoset P
-  = (⋂ₑ P) , (isInfimum⋂ₑ P)
-
 isSupremum⋃ₑ : {A : Type ℓ}
                {I : Type ℓ}
                (P : I → Embedding A ℓ)
@@ -133,13 +99,3 @@ isSupremum⋃ₑ : {A : Type ℓ}
 fst (isSupremum⋃ₑ P) i y y∈Pi = (y , ∣ i , y∈Pi ∣₁) , refl
 snd (isSupremum⋃ₑ P) (X , upr) y ((a , ∃i) , a≡y)
   = ∥₁.rec (isProp∈ₑ y X) (λ (i , a∈Pi) → upr i y (subst (_∈ₑ P i) a≡y a∈Pi)) ∃i
-
-isJoinCompleteSemipseudolatticeEmbeddingPoset : {A : Type ℓ}
-                                              → isJoinCompleteSemipseudolattice (EmbeddingPoset A ℓ)
-isJoinCompleteSemipseudolatticeEmbeddingPoset P
-  = (⋃ₑ P) , (isSupremum⋃ₑ P)
-
-isCompleteLatticeEmbeddingPoset : {A : Type ℓ}
-                                → isCompleteLattice (EmbeddingPoset A ℓ)
-isCompleteLatticeEmbeddingPoset = isMeetCompleteSemipseudolatticeEmbeddingPoset ,
-                                  isJoinCompleteSemipseudolatticeEmbeddingPoset
