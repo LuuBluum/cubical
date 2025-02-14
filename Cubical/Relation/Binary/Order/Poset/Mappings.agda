@@ -210,14 +210,64 @@ module _
   (f : ⟨ P ⟩ → ⟨ S ⟩)
   where
     private
+      isP = PosetStr.isPoset (snd P)
+      isS = PosetStr.isPoset (snd S)
+
       _≤P_ = PosetStr._≤_ (snd P)
       _≤S_ = PosetStr._≤_ (snd S)
+
+      propP = IsPoset.is-prop-valued isP
+      rflP = IsPoset.is-refl isP
+      antiP = IsPoset.is-antisym isP
+      transP = IsPoset.is-trans isP
+
+      propS = IsPoset.is-prop-valued isS
+      rflS = IsPoset.is-refl isS
+      antiS = IsPoset.is-antisym isS
+      transS = IsPoset.is-trans isS
 
     hasResidual : Type _
     hasResidual = IsIsotone (snd P) f (snd S) ×
                   (Σ[ g ∈ (⟨ S ⟩ → ⟨ P ⟩) ] (IsIsotone (snd S) g (snd P) ×
                                             (∀ x → x ≤P (g ∘ f) x) ×
                                             (∀ x → (f ∘ g) x ≤S x)))
+
+    residualUnique : (p q : hasResidual)
+                   → p .snd .fst ≡ q .snd .fst
+    residualUnique (isf₀ , g  , isg  , g∘f  , f∘g)
+                   (isf₁ , g* , isg* , g*∘f , f∘g*)
+                   = funExt λ x → antiP (g x) (g* x) (g≤g* x) (g*≤g x)
+                   where g≤g* : ∀ x → g x ≤P g* x
+                         g≤g* x = transP (g x) ((g* ∘ f) (g x)) (g* x) (g*∘f (g x))
+                                          (IsIsotone.pres≤ isg* (f (g x)) x (f∘g x))
+
+                         g*≤g : ∀ x → g* x ≤P g x
+                         g*≤g x = transP (g* x) ((g ∘ f) (g* x)) (g x) (g∘f (g* x))
+                                         (IsIsotone.pres≤ isg (f (g* x)) x (f∘g* x))
+
+    isPropHasResidual : isProp hasResidual
+    isPropHasResidual p q = ≡-× (isPropIsIsotone _ f _ _ _)
+                                 (Σ≡Prop (λ g → isProp× (isPropIsIsotone _ g _)
+                                                (isProp× (isPropΠ (λ x → propP x (g (f x))))
+                                                         (isPropΠ λ x → propS (f (g x)) x)))
+                                          (residualUnique p q))
+
+    residual : hasResidual → ⟨ S ⟩ → ⟨ P ⟩
+    residual (_ , g , _) = g
+
+    AbsorbResidual : (res : hasResidual)
+                   → f ∘ (residual res) ∘ f ≡ f
+    AbsorbResidual (isf , f⁺ , _ , f⁺∘f , f∘f⁺)
+      = funExt λ x → antiS ((f ∘ f⁺ ∘ f) x) (f x)
+                           (f∘f⁺ (f x))
+                           (IsIsotone.pres≤ isf x (f⁺ (f x)) (f⁺∘f x))
+
+    ResidualAbsorb : (res : hasResidual)
+                   → (residual res) ∘ f ∘ (residual res) ≡ (residual res)
+    ResidualAbsorb (_ , f⁺ , isf⁺ , f⁺∘f , f∘f⁺)
+      = funExt λ x → antiP ((f⁺ ∘ f ∘ f⁺) x) (f⁺ x)
+                           (IsIsotone.pres≤ isf⁺ (f (f⁺ x)) x (f∘f⁺ x))
+                           (f⁺∘f (f⁺ x))
 
 -- The next part requires our posets to operate over the same universes
 module _
@@ -322,65 +372,6 @@ module _
       = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ principalDownset S y)
                                                    (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
                                                    (grt y)
-
-module _
-  (P : Poset ℓ₀ ℓ₀')
-  (S : Poset ℓ₁ ℓ₁')
-  (f : ⟨ P ⟩ → ⟨ S ⟩)
-  where
-    private
-      isP = PosetStr.isPoset (snd P)
-      isS = PosetStr.isPoset (snd S)
-
-      _≤P_ = PosetStr._≤_ (snd P)
-      _≤S_ = PosetStr._≤_ (snd S)
-
-      propP = IsPoset.is-prop-valued isP
-      rflP = IsPoset.is-refl isP
-      antiP = IsPoset.is-antisym isP
-      transP = IsPoset.is-trans isP
-
-      propS = IsPoset.is-prop-valued isS
-      rflS = IsPoset.is-refl isS
-      antiS = IsPoset.is-antisym isS
-      transS = IsPoset.is-trans isS
-
-    residualUnique : (p q : hasResidual P S f)
-                   → p .snd .fst ≡ q .snd .fst
-    residualUnique (isf₀ , g  , isg  , g∘f  , f∘g)
-                   (isf₁ , g* , isg* , g*∘f , f∘g*)
-                   = funExt λ x → antiP (g x) (g* x) (g≤g* x) (g*≤g x)
-                   where g≤g* : ∀ x → g x ≤P g* x
-                         g≤g* x = transP (g x) ((g* ∘ f) (g x)) (g* x) (g*∘f (g x))
-                                          (IsIsotone.pres≤ isg* (f (g x)) x (f∘g x))
-
-                         g*≤g : ∀ x → g* x ≤P g x
-                         g*≤g x = transP (g* x) ((g ∘ f) (g* x)) (g x) (g∘f (g* x))
-                                         (IsIsotone.pres≤ isg (f (g* x)) x (f∘g* x))
-
-    isPropHasResidual : isProp (hasResidual P S f)
-    isPropHasResidual p q = ≡-× (isPropIsIsotone _ f _ _ _)
-                                 (Σ≡Prop (λ g → isProp× (isPropIsIsotone _ g _)
-                                                (isProp× (isPropΠ (λ x → propP x (g (f x))))
-                                                         (isPropΠ λ x → propS (f (g x)) x)))
-                                          (residualUnique p q))
-
-    residual : (hasResidual P S f) → ⟨ S ⟩ → ⟨ P ⟩
-    residual (_ , g , _) = g
-
-    AbsorbResidual : (res : hasResidual P S f)
-                   → f ∘ (residual res) ∘ f ≡ f
-    AbsorbResidual (isf , f⁺ , _ , f⁺∘f , f∘f⁺)
-      = funExt λ x → antiS ((f ∘ f⁺ ∘ f) x) (f x)
-                           (f∘f⁺ (f x))
-                           (IsIsotone.pres≤ isf x (f⁺ (f x)) (f⁺∘f x))
-
-    ResidualAbsorb : (res : hasResidual P S f)
-                   → (residual res) ∘ f ∘ (residual res) ≡ (residual res)
-    ResidualAbsorb (_ , f⁺ , isf⁺ , f⁺∘f , f∘f⁺)
-      = funExt λ x → antiP ((f⁺ ∘ f ∘ f⁺) x) (f⁺ x)
-                           (IsIsotone.pres≤ isf⁺ (f (f⁺ x)) x (f∘f⁺ x))
-                           (f⁺∘f (f⁺ x))
 
 isResidual : (P : Poset ℓ₀ ℓ₀')
              (S : Poset ℓ₁ ℓ₁')
