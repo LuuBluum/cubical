@@ -309,6 +309,43 @@ module _
     isPropIsResiduated : isProp isResiduated
     isPropIsResiduated = isPropΠ λ _ → isPropIsPrincipalDownset P _
 
+    hasDownsetGreatest : Type (ℓ-max ℓ ℓ')
+    hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ (y ↓))
+
+    isPropHasDownsetGreatest : isProp hasDownsetGreatest
+    isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ (y ↓)}
+
+    isResiduated→hasDownsetGreatest : isResiduated → hasDownsetGreatest
+    isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ (y ↓)) (res y)
+
+    hasDownsetGreatest→IsIsotone→isResiduated : hasDownsetGreatest → IsIsotone (snd P) f (snd S) → isResiduated
+    hasDownsetGreatest→IsIsotone→isResiduated grt is y
+      = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ principalDownset S y)
+                                                   (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
+                                                   (grt y)
+
+module _
+  (P : Poset ℓ₀ ℓ₀')
+  (S : Poset ℓ₁ ℓ₁')
+  (f : ⟨ P ⟩ → ⟨ S ⟩)
+  where
+    private
+      isP = PosetStr.isPoset (snd P)
+      isS = PosetStr.isPoset (snd S)
+
+      _≤P_ = PosetStr._≤_ (snd P)
+      _≤S_ = PosetStr._≤_ (snd S)
+
+      propP = IsPoset.is-prop-valued isP
+      rflP = IsPoset.is-refl isP
+      antiP = IsPoset.is-antisym isP
+      transP = IsPoset.is-trans isP
+
+      propS = IsPoset.is-prop-valued isS
+      rflS = IsPoset.is-refl isS
+      antiS = IsPoset.is-antisym isS
+      transS = IsPoset.is-trans isS
+
     residualUnique : (p q : hasResidual P S f)
                    → p .snd .fst ≡ q .snd .fst
     residualUnique (isf₀ , g  , isg  , g∘f  , f∘g)
@@ -329,21 +366,6 @@ module _
                                                          (isPropΠ λ x → propS (f (g x)) x)))
                                           (residualUnique p q))
 
-    hasDownsetGreatest : Type (ℓ-max ℓ ℓ')
-    hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ (y ↓))
-
-    isPropHasDownsetGreatest : isProp hasDownsetGreatest
-    isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ (y ↓)}
-
-    isResiduated→hasDownsetGreatest : isResiduated → hasDownsetGreatest
-    isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ (y ↓)) (res y)
-
-    hasDownsetGreatest→IsIsotone→isResiduated : hasDownsetGreatest → IsIsotone (snd P) f (snd S) → isResiduated
-    hasDownsetGreatest→IsIsotone→isResiduated grt is y
-      = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ principalDownset S y)
-                                                   (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
-                                                   (grt y)
-
     residual : (hasResidual P S f) → ⟨ S ⟩ → ⟨ P ⟩
     residual (_ , g , _) = g
 
@@ -361,12 +383,14 @@ module _
                            (IsIsotone.pres≤ isf⁺ (f (f⁺ x)) x (f∘f⁺ x))
                            (f⁺∘f (f⁺ x))
 
-isResidual : (P S : Poset ℓ ℓ')
+isResidual : (P : Poset ℓ₀ ℓ₀')
+             (S : Poset ℓ₁ ℓ₁')
            → (f⁺ : ⟨ S ⟩ → ⟨ P ⟩)
-           → Type (ℓ-max ℓ ℓ')
+           → Type (ℓ-max (ℓ-max ℓ₀ ℓ₀') (ℓ-max ℓ₁ ℓ₁'))
 isResidual P S f⁺ = Σ[ f ∈ (⟨ P ⟩ → ⟨ S ⟩) ] (Σ[ res ∈ hasResidual P S f ] f⁺ ≡ residual P S f res)
 
-isResidualOfUnique : (P S : Poset ℓ ℓ')
+isResidualOfUnique : (P : Poset ℓ₀ ℓ₀')
+                     (S : Poset ℓ₁ ℓ₁')
                    → (f⁺ : ⟨ S ⟩ → ⟨ P ⟩)
                    → (p q : isResidual P S f⁺)
                    → p .fst ≡ q .fst
@@ -386,7 +410,8 @@ isResidualOfUnique P S h (f , (isf , f⁺ , isf⁺ , f⁺∘f , f∘f⁺) , h≡
                          trans = IsPoset.is-trans (PosetStr.isPoset (snd S))
                          p = funExt⁻ ((sym h≡f⁺) ∙ h≡g⁺)
 
-isPropIsResidual : (P S : Poset ℓ ℓ')
+isPropIsResidual : (P : Poset ℓ₀ ℓ₀')
+                   (S : Poset ℓ₁ ℓ₁')
                  → (f⁺ : ⟨ S ⟩ → ⟨ P ⟩)
                  → isProp (isResidual P S f⁺)
 isPropIsResidual P S f⁺ p q
@@ -394,7 +419,9 @@ isPropIsResidual P S f⁺ p q
                             λ _ → isSet→ (IsPoset.is-set (PosetStr.isPoset (snd P))) _ _)
                            (isResidualOfUnique P S f⁺ p q)
 
-hasResidual-∘ : (E F G : Poset ℓ ℓ')
+hasResidual-∘ : (E : Poset ℓ₀ ℓ₀')
+                (F : Poset ℓ₁ ℓ₁')
+                (G : Poset ℓ₂ ℓ₂')
               → (f : ⟨ E ⟩ → ⟨ F ⟩)
               → (g : ⟨ F ⟩ → ⟨ G ⟩)
               → hasResidual E F f
@@ -424,7 +451,9 @@ hasResidual-∘ E F G f g (isf , f⁺ , isf⁺ , f⁺∘f , f∘f⁺) (isg , g�
                       (IsIsotone.pres≤ isg (f (f⁺ (g⁺ x))) (g⁺ x) (f∘f⁺ (g⁺ x)))
                       (g∘g⁺ x)
 
-isResidual-∘ : (E F G : Poset ℓ ℓ')
+isResidual-∘ : (E : Poset ℓ₀ ℓ₀')
+               (F : Poset ℓ₁ ℓ₁')
+               (G : Poset ℓ₂ ℓ₂')
              → (f⁺ : ⟨ F ⟩ → ⟨ E ⟩)
              → (g⁺ : ⟨ G ⟩ → ⟨ F ⟩)
              → isResidual E F f⁺
@@ -806,9 +835,9 @@ isDualClosure→ComposedResidual {ℓ} {ℓ'} {E = E} {f = f} (isf , f≡f∘f ,
         ♮⁺∘♮ = elimProp (λ x → isProp⊑ x ((♮⁺ ∘ ♮) x))
                         λ x → subst (f x ≤_) (funExt⁻ f≡f∘f x) (rfl (f x))
 
-ComposedResidual→isClosure : {E : Poset ℓ ℓ'}
+ComposedResidual→isClosure : {E : Poset ℓ₀ ℓ₀'}
                              {f : ⟨ E ⟩ → ⟨ E ⟩}
-                           → Σ[ F ∈ Poset ℓ ℓ' ] (Σ[ g ∈ (⟨ E ⟩ → ⟨ F ⟩) ] (Σ[ res ∈ hasResidual E F g ] f ≡ (residual E F g res) ∘ g))
+                           → Σ[ F ∈ Poset ℓ₁ ℓ₁' ] (Σ[ g ∈ (⟨ E ⟩ → ⟨ F ⟩) ] (Σ[ res ∈ hasResidual E F g ] f ≡ (residual E F g res) ∘ g))
                            → isClosure E f
 ComposedResidual→isClosure {E = E} {f = f} (F , g , (isg , g⁺ , isg⁺ , g⁺∘g , g∘g⁺) , f≡g⁺∘g)
   = subst (λ x → IsIsotone (snd E) x (snd E)) (sym f≡g⁺∘g) (IsIsotone-∘ (snd E) g (snd F) g⁺ (snd E) isg isg⁺) ,
@@ -820,9 +849,9 @@ ComposedResidual→isClosure {E = E} {f = f} (F , g , (isg , g⁺ , isg⁺ , g�
     λ x → subst (x ≤_) (sym (funExt⁻ f≡g⁺∘g x)) (g⁺∘g x)
     where _≤_ = PosetStr._≤_ (snd E)
 
-ComposedResidual→isDualClosure : {E : Poset ℓ ℓ'}
+ComposedResidual→isDualClosure : {E : Poset ℓ₀ ℓ₀'}
                                  {f : ⟨ E ⟩ → ⟨ E ⟩}
-                               → Σ[ F ∈ Poset ℓ ℓ' ] (Σ[ g ∈ (⟨ F ⟩ → ⟨ E ⟩) ] (Σ[ res ∈ hasResidual F E g ] f ≡ g ∘ (residual F E g res)))
+                               → Σ[ F ∈ Poset ℓ₁ ℓ₁' ] (Σ[ g ∈ (⟨ F ⟩ → ⟨ E ⟩) ] (Σ[ res ∈ hasResidual F E g ] f ≡ g ∘ (residual F E g res)))
                                → isDualClosure E f
 ComposedResidual→isDualClosure {E = E} {f = f} (F , g , (isg , g⁺ , isg⁺ , g⁺∘g , g∘g⁺) , f≡g∘g⁺)
   = subst (λ x → IsIsotone (snd E) x (snd E)) (sym f≡g∘g⁺) (IsIsotone-∘ (snd E) g⁺ (snd F) g (snd E) isg⁺ isg) ,
@@ -1181,7 +1210,8 @@ IsPosetEquiv→isResiduatedBijection P S e eq
         is⁻ : IsIsotone (snd S) (invEq e) (snd P)
         IsIsotone.pres≤ is⁻ x y = equivFun (IsPosetEquiv.pres≤⁻ eq x y)
 
-isResiduatedBijection→IsPosetEquiv : (P S : Poset ℓ ℓ')
+isResiduatedBijection→IsPosetEquiv : (P : Poset ℓ₀ ℓ₀')
+                                     (S : Poset ℓ₁ ℓ₁')
                                      (e : ⟨ P ⟩ ≃ ⟨ S ⟩)
                                    → hasResidual P S (equivFun e)
                                    → IsPosetEquiv (snd P) e (snd S)
@@ -1211,7 +1241,8 @@ IsPosetEquiv.pres≤ (isResiduatedBijection→IsPosetEquiv P S e
         lemma x = e⁻≡inv (equivFun e x) ∙ retEq e x
 
 -- We can weaken the equivalence of a poset equivalence to a surjection
-isOrderRecovering→isEmbedding : (P S : Poset ℓ ℓ')
+isOrderRecovering→isEmbedding : (P : Poset ℓ₀ ℓ₀')
+                                (S : Poset ℓ₁ ℓ₁')
                                 (f : ⟨ P ⟩ → ⟨ S ⟩)
                               → (∀ x y → (PosetStr._≤_ (snd S) (f x) (f y))
                                        → (PosetStr._≤_ (snd P) x y))
@@ -1234,7 +1265,8 @@ isOrderRecovering→isEmbedding P S f is = emb
 
 -- Galois connections work similarly to residuals, but are antitone
 module _
-  (E F : Poset ℓ ℓ')
+  (E : Poset ℓ₀ ℓ₀')
+  (F : Poset ℓ₁ ℓ₁')
   (f : ⟨ E ⟩ → ⟨ F ⟩)
   (g : ⟨ F ⟩ → ⟨ E ⟩)
   where
@@ -1245,7 +1277,7 @@ module _
       propE = IsPoset.is-prop-valued (PosetStr.isPoset (snd E))
       propF = IsPoset.is-prop-valued (PosetStr.isPoset (snd F))
 
-    isGaloisConnection : Type (ℓ-max ℓ ℓ')
+    isGaloisConnection : Type (ℓ-max (ℓ-max ℓ₀ ℓ₀') (ℓ-max ℓ₁ ℓ₁'))
     isGaloisConnection = IsAntitone (snd E) f (snd F) ×
                          IsAntitone (snd F) g (snd E) ×
                         (∀ x → x ≤F (f ∘ g) x) ×
@@ -1282,7 +1314,8 @@ module _
     GaloisConnectionDualClosure conn
       = ComposedResidual→isDualClosure (E , f , isGaloisConnection→hasResidualDual conn , refl)
 
-hasResidual→isGaloisConnectionDual : (E F : Poset ℓ ℓ')
+hasResidual→isGaloisConnectionDual : (E : Poset ℓ₀ ℓ₀')
+                                     (F : Poset ℓ₁ ℓ₁')
                                      (f : ⟨ E ⟩ → ⟨ F ⟩)
                                    → (res : hasResidual E F f)
                                    → isGaloisConnection E (DualPoset F) f (residual E F f res)
