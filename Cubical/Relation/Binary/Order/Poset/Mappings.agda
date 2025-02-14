@@ -152,6 +152,8 @@ module _
   {S : Poset ℓ₁ ℓ₁'}
   (f : ⟨ P ⟩ → ⟨ S ⟩)
   where
+    open PosetDownset S
+    open PosetUpset S
     private
       isP = PosetStr.isPoset (snd P)
       isS = PosetStr.isPoset (snd S)
@@ -164,9 +166,9 @@ module _
       transS = IsPoset.is-trans isS
 
     IsIsotone→PreimagePrincipalDownsetIsDownset : IsIsotone (snd P) f (snd S)
-                                                → ∀ y → isDownset P (f ⃖ (principalDownset S y))
+                                                → ∀ y → isDownset P (f ⃖ (y ↓))
     IsIsotone→PreimagePrincipalDownsetIsDownset is y (x , inPrex) z z≤x
-      = ∥₁.rec (isEmbedding→hasPropFibers (preimageInclusion f (principalDownset S y) .snd) z)
+      = ∥₁.rec (isEmbedding→hasPropFibers (preimageInclusion f (y ↓) .snd) z)
                (λ { ((b , b≤y) , fibb) →
                     (z , ∣ (f z , transS (f z) (f x) y
                                          (IsIsotone.pres≤ is z x z≤x)
@@ -175,9 +177,9 @@ module _
                      refl }) inPrex
 
     IsIsotone→PreimagePrincipalUpsetIsUpset : IsIsotone (snd P) f (snd S)
-                                            → ∀ y → isUpset P (f ⃖ (principalUpset S y))
+                                            → ∀ y → isUpset P (f ⃖ (y ↑))
     IsIsotone→PreimagePrincipalUpsetIsUpset is y (x , inPrex) z x≤z
-      = ∥₁.rec (isEmbedding→hasPropFibers (preimageInclusion f (principalUpset S y) .snd) z)
+      = ∥₁.rec (isEmbedding→hasPropFibers (preimageInclusion f (y ↑) .snd) z)
                (λ { ((b , y≤b) , fibb) →
                     (z , ∣ (f z , transS y (f x) (f z)
                                         (subst (y ≤S_) fibb y≤b)
@@ -185,7 +187,7 @@ module _
                                          refl ∣₁) ,
                      refl }) inPrex
 
-    PreimagePrincipalDownsetIsDownset→IsIsotone : (∀ x → isDownset P (f ⃖ principalDownset S x))
+    PreimagePrincipalDownsetIsDownset→IsIsotone : (∀ x → isDownset P (f ⃖ (x ↓)))
                                                 → IsIsotone (snd P) f (snd S)
     IsIsotone.pres≤ (PreimagePrincipalDownsetIsDownset→IsIsotone down) y x y≤x
       = ∥₁.rec (propS _ _) (λ { ((b , b≤fx) , fibb) → subst (_≤S f x) (fibb ∙ cong f fiba) b≤fx }) pre
@@ -194,7 +196,7 @@ module _
               pre = fib .fst .snd
               fiba = fib .snd
 
-    PreimagePrincipalUpsetIsUpset→IsIsotone : (∀ x → isUpset P (f ⃖ principalUpset S x))
+    PreimagePrincipalUpsetIsUpset→IsIsotone : (∀ x → isUpset P (f ⃖ (x ↑)))
                                             → IsIsotone (snd P) f (snd S)
     IsIsotone.pres≤ (PreimagePrincipalUpsetIsUpset→IsIsotone up) x y x≤y
       = ∥₁.rec (propS _ _) (λ { ((b , fx≤b) , fibb) → subst (f x ≤S_) (fibb ∙ cong f fiba) fx≤b }) pre
@@ -223,6 +225,7 @@ module _
   (P S : Poset ℓ ℓ')
   (f : ⟨ P ⟩ → ⟨ S ⟩)
   where
+    open PosetDownset S
     private
       isP = PosetStr.isPoset (snd P)
       isS = PosetStr.isPoset (snd S)
@@ -242,18 +245,18 @@ module _
 
     -- We can now define the type of residuated maps
     isResiduated : Type _
-    isResiduated = ∀ y → isPrincipalDownset P (f ⃖ (principalDownset S y))
+    isResiduated = ∀ y → isPrincipalDownset P (f ⃖ (y ↓))
 
     isResiduated→hasResidual : isResiduated
                              → hasResidual P S f
     isResiduated→hasResidual down = isotonef , g , isotoneg , g∘f , f∘g
       where isotonef : IsIsotone (snd P) f (snd S)
             isotonef = PreimagePrincipalDownsetIsDownset→IsIsotone f
-                       λ x → isPrincipalDownset→isDownset P (f ⃖ principalDownset S x) (down x)
+                       λ x → isPrincipalDownset→isDownset P (f ⃖ (x ↓)) (down x)
 
-            isotonef⃖ : ∀ x y → x ≤S y → (f ⃖ principalDownset S x) ⊆ₑ (f ⃖ principalDownset S y)
+            isotonef⃖ : ∀ x y → x ≤S y → (f ⃖ (x ↓)) ⊆ₑ (f ⃖ (y ↓))
             isotonef⃖ x y x≤y z ((a , pre) , fiba)
-              = ∥₁.rec (isProp∈ₑ z (f ⃖ principalDownset S y))
+              = ∥₁.rec (isProp∈ₑ z (f ⃖ (y ↓)))
                        (λ { ((b , b≤x) , fibb) → (a , ∣ (b , (transS b x y b≤x x≤y)) , fibb ∣₁) , fiba }) pre
 
             g : ⟨ S ⟩ → ⟨ P ⟩
@@ -281,7 +284,7 @@ module _
                            (λ { ((a , a≤y) , fib) →
                                 subst (_≤S y) (fib ∙ cong f (gy∈pre .snd)) a≤y })
                            (gy∈pre .fst .snd)
-              where gy∈pre : g y ∈ₑ (f ⃖ principalDownset S y)
+              where gy∈pre : g y ∈ₑ (f ⃖ (y ↓))
                     gy∈pre = subst (g y ∈ₑ_) (sym (down y .snd))
                                    (equivFun (principalDownsetMembership P (g y) (g y)) (rflP (g y)))
 
@@ -327,13 +330,13 @@ module _
                                           (residualUnique p q))
 
     hasDownsetGreatest : Type (ℓ-max ℓ ℓ')
-    hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ principalDownset S y)
+    hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ (y ↓))
 
     isPropHasDownsetGreatest : isProp hasDownsetGreatest
-    isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ principalDownset S y}
+    isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ (y ↓)}
 
     isResiduated→hasDownsetGreatest : isResiduated → hasDownsetGreatest
-    isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ principalDownset S y) (res y)
+    isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ (y ↓)) (res y)
 
     hasDownsetGreatest→IsIsotone→isResiduated : hasDownsetGreatest → IsIsotone (snd P) f (snd S) → isResiduated
     hasDownsetGreatest→IsIsotone→isResiduated grt is y

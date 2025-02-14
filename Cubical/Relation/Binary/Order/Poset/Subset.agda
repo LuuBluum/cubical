@@ -266,11 +266,11 @@ module PosetDownset (P' : Poset ℓ ℓ') where
   private P = ⟨ P' ⟩
   open PosetStr (snd P')
 
-  _↓ : P → Type (ℓ-max ℓ ℓ')
-  u ↓ = principalDownset P' u .fst
+  _↓ : P → Embedding P (ℓ-max ℓ ℓ')
+  u ↓ = principalDownset P' u
 
   _↓ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
-  fst (u ↓ᴾ) = u ↓
+  fst (u ↓ᴾ) = (u ↓) .fst
   PosetStr._≤_ (snd (u ↓ᴾ)) v w = v .fst ≤ w .fst
   PosetStr.isPoset (snd (u ↓ᴾ)) =
     isPosetInduced
@@ -282,11 +282,11 @@ module PosetUpset (P' : Poset ℓ ℓ') where
   private P = ⟨ P' ⟩
   open PosetStr (snd P')
 
-  _↑ : P → Type (ℓ-max ℓ ℓ')
-  u ↑ = principalUpset P' u .fst
+  _↑ : P → Embedding P (ℓ-max ℓ ℓ')
+  u ↑ = principalUpset P' u
 
   _↑ᴾ : P → Poset (ℓ-max ℓ ℓ') ℓ'
-  fst (u ↑ᴾ) = u ↑
+  fst (u ↑ᴾ) = (u ↑) .fst
   PosetStr._≤_ (snd (u ↑ᴾ)) v w = v .fst ≤ w .fst
   PosetStr.isPoset (snd (u ↑ᴾ)) =
     isPosetInduced
