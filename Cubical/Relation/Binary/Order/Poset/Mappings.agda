@@ -5,6 +5,7 @@ open import Cubical.Foundations.Function
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
+open import Cubical.Foundations.Transport
 open import Cubical.Foundations.Univalence
 
 open import Cubical.Algebra.Semigroup
@@ -275,6 +276,7 @@ module _
   (f : ⟨ P ⟩ → ⟨ S ⟩)
   where
     open PosetDownset S
+    open PosetUpset S
     private
       isP = PosetStr.isPoset (snd P)
       isS = PosetStr.isPoset (snd S)
@@ -292,9 +294,13 @@ module _
       antiS = IsPoset.is-antisym isS
       transS = IsPoset.is-trans isS
 
-    -- We can now define the type of residuated maps
+    -- We can now define the type of residuated maps independent of their residual
     isResiduated : Type _
     isResiduated = ∀ y → isPrincipalDownset P (f ⃖ (y ↓))
+
+    -- As well as a property that their residuals will have
+    isDualResiduated : Type _
+    isDualResiduated = ∀ y → isPrincipalUpset P (f ⃖ (y ↑))
 
     isResiduated→hasResidual : isResiduated
                              → hasResidual P S f
@@ -340,38 +346,57 @@ module _
     hasResidual→isResiduated : hasResidual P S f
                              → isResiduated
     hasResidual→isResiduated (isf , g , isg , g∘f , f∘g) y
-      = (g y) , (equivFun (EmbeddingIP _ _)
-                ((λ x ((a , pre) , fiba) →
-                  ∥₁.rec (isProp∈ₑ x (principalDownset P (g y)))
-                                     (λ { ((b , b≤y) , fibb) →
-                                          equivFun (principalDownsetMembership P x (g y))
-                                                   (transP x (g (f x)) (g y) (g∘f x)
-                                                     (IsIsotone.pres≤ isg (f x) y
-                                                       (subst (_≤S y)
-                                                         (fibb ∙ cong f fiba) b≤y))) }) pre) ,
-                  λ x x∈g → (x , ∣ ((f x) ,
-                                   (transS (f x) (f (g y)) y
-                                     (IsIsotone.pres≤ isf x (g y)
-                                       (invEq (principalDownsetMembership P x (g y)) x∈g))
-                                     (f∘g y))) , refl ∣₁) , refl))
+      = (g y) , (isAntisym⊆ₑ _ _
+                (λ x ((a , pre) , fiba) →
+                 ∥₁.rec (isProp∈ₑ x (principalDownset P (g y)))
+                        (λ ((b , b≤y) , fibb) →
+                           equivFun (principalDownsetMembership P x (g y))
+                                    (transP x (g (f x)) (g y) (g∘f x)
+                                            (IsIsotone.pres≤ isg (f x) y
+                                              (subst (_≤S y)
+                                                (fibb ∙ cong f fiba) b≤y))))
+                         pre)
+                 λ x x∈g → (x , ∣ (f x ,
+                                   transS (f x) (f (g y)) y
+                                  (IsIsotone.pres≤ isf x (g y)
+                                    (invEq (principalDownsetMembership P x (g y)) x∈g))
+                                    (f∘g y)) , refl ∣₁) , refl)
 
     isPropIsResiduated : isProp isResiduated
     isPropIsResiduated = isPropΠ λ _ → isPropIsPrincipalDownset P _
 
+    isPropIsDualResiduated : isProp isDualResiduated
+    isPropIsDualResiduated = isPropΠ λ _ → isPropIsPrincipalUpset P _
+
     hasDownsetGreatest : Type (ℓ-max ℓ ℓ')
     hasDownsetGreatest = ∀ y → Greatest (isPoset→isProset isP) (f ⃖ (y ↓))
+
+    hasUpsetLeast : Type (ℓ-max ℓ ℓ')
+    hasUpsetLeast = ∀ y → Least (isPoset→isProset isP) (f ⃖ (y ↑))
 
     isPropHasDownsetGreatest : isProp hasDownsetGreatest
     isPropHasDownsetGreatest = isPropΠ λ y → GreatestUnique isP {P = f ⃖ (y ↓)}
 
+    isPropHasUpsetLeast : isProp hasUpsetLeast
+    isPropHasUpsetLeast = isPropΠ λ y → LeastUnique isP {P = f ⃖ (y ↑)}
+
     isResiduated→hasDownsetGreatest : isResiduated → hasDownsetGreatest
     isResiduated→hasDownsetGreatest res y = isPrincipalDownset→hasGreatest P (f ⃖ (y ↓)) (res y)
 
+    isDualResiduated→hasUpsetLeast : isDualResiduated → hasUpsetLeast
+    isDualResiduated→hasUpsetLeast res y = isPrincipalUpset→hasLeast P (f ⃖ (y ↑)) (res y)
+
     hasDownsetGreatest→IsIsotone→isResiduated : hasDownsetGreatest → IsIsotone (snd P) f (snd S) → isResiduated
     hasDownsetGreatest→IsIsotone→isResiduated grt is y
-      = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ principalDownset S y)
+      = isDownsetWithGreatest→isPrincipalDownset P (f ⃖ (y ↓))
                                                    (IsIsotone→PreimagePrincipalDownsetIsDownset f is y)
                                                    (grt y)
+
+    hasUpsetLeast→IsIsotone→isDualResiduated : hasUpsetLeast → IsIsotone (snd P) f (snd S) → isDualResiduated
+    hasUpsetLeast→IsIsotone→isDualResiduated lst is y
+      = isUpsetWithLeast→isPrincipalUpset P (f ⃖ (y ↑))
+                                            (IsIsotone→PreimagePrincipalUpsetIsUpset f is y)
+                                            (lst y)
 
 isResidual : (P : Poset ℓ₀ ℓ₀')
              (S : Poset ℓ₁ ℓ₁')
@@ -454,6 +479,105 @@ isResidual-∘ E F G f⁺ g⁺ (f , resf , f⁺≡f*)
              = (g ∘ f) ,
                (hasResidual-∘ E F G f g resf resg) ,
                (funExt (λ x → cong f⁺ (funExt⁻ g⁺≡g* x) ∙ funExt⁻ f⁺≡f* _))
+module _
+  (P S : Poset ℓ ℓ')
+  (f : ⟨ P ⟩ → ⟨ S ⟩)
+  where
+    open PosetUpset S
+    private
+      isP = PosetStr.isPoset (snd P)
+      isS = PosetStr.isPoset (snd S)
+
+      _≤P_ = PosetStr._≤_ (snd P)
+      transP = IsPoset.is-trans isP
+      transS = IsPoset.is-trans isS
+
+    hasResidual→residualIsDualResiduated : (res : hasResidual P S f)
+                                         → isDualResiduated S P (residual P S f res)
+    hasResidual→residualIsDualResiduated (isf , f⁺ , isf⁺ , f⁺∘f , f∘f⁺) y
+      = (f y) , (isAntisym⊆ₑ _ _
+                (λ x ((a , pre) , fiba) →
+                 ∥₁.rec (isProp∈ₑ x ((f y) ↑))
+                        (λ ((b , y≤b) , fibb) →
+                           equivFun (principalUpsetMembership S (f y) x)
+                                    (transS (f y) (f (f⁺ x)) x
+                                            (IsIsotone.pres≤ isf y (f⁺ x)
+                                              (subst (y ≤P_) (fibb ∙ cong f⁺ fiba) y≤b))
+                                            (f∘f⁺ x)))
+                         pre)
+                 λ x x∈f⁺ → (x , ∣ ((f⁺ x) ,
+                                   transP y (f⁺ (f y)) (f⁺ x)
+                                         (f⁺∘f y)
+                                         (IsIsotone.pres≤ isf⁺ (f y) x
+                                           (invEq (principalUpsetMembership S (f y) x) x∈f⁺))) ,
+                                   refl ∣₁) , refl)
+
+isResidual→isDualResiduated : (P S : Poset ℓ ℓ')
+                            → (f⁺ : ⟨ S ⟩ → ⟨ P ⟩)
+                            → isResidual P S f⁺
+                            → isDualResiduated S P f⁺
+isResidual→isDualResiduated P S f⁺ (f , res , f⁺≡resf)
+  = transport⁻ (cong (isDualResiduated S P) f⁺≡resf) (hasResidual→residualIsDualResiduated P S f res)
+
+isDualResiduated→isResidual : (P S : Poset ℓ ℓ')
+                            → (f⁺ : ⟨ S ⟩ → ⟨ P ⟩)
+                            → isDualResiduated S P f⁺
+                            → isResidual P S f⁺
+isDualResiduated→isResidual P S f⁺ dual
+  = f , ((isotonef , f⁺ , isotonef⁺ , f⁺∘f , f∘f⁺) , refl)
+  where open PosetUpset P
+        isP = PosetStr.isPoset (snd P)
+        isS = PosetStr.isPoset (snd S)
+
+        _≤P_ = PosetStr._≤_ (snd P)
+        _≤S_ = PosetStr._≤_ (snd S)
+
+        propP = IsPoset.is-prop-valued isP
+        rflP = IsPoset.is-refl isP
+        antiP = IsPoset.is-antisym isP
+        transP = IsPoset.is-trans isP
+
+        propS = IsPoset.is-prop-valued isS
+        rflS = IsPoset.is-refl isS
+        antiS = IsPoset.is-antisym isS
+        transS = IsPoset.is-trans isS
+
+        isotonef⁺ : IsIsotone (snd S) f⁺ (snd P)
+        isotonef⁺ = PreimagePrincipalUpsetIsUpset→IsIsotone f⁺
+                    λ x → isPrincipalUpset→isUpset S (f⁺ ⃖ (x ↑)) (dual x)
+
+        isotonef⁺← : ∀ x y → x ≤P y → (f⁺ ⃖ (y ↑)) ⊆ₑ (f⁺ ⃖ (x ↑))
+        isotonef⁺← x y x≤y z ((a , pre) , fiba)
+          = ∥₁.rec (isProp∈ₑ z (f⁺ ⃖ (x ↑)))
+                   (λ ((b , y≤b) , fibb) → (a , ∣ (b , (transP x y b x≤y y≤b)) , fibb ∣₁) , fiba) pre
+
+        f : ⟨ P ⟩ → ⟨ S ⟩
+        f x = dual x .fst
+
+        isotonef : IsIsotone (snd P) f (snd S)
+        IsIsotone.pres≤ isotonef x y x≤y
+          = invEq (principalUpsetMembership S (f x) (f y))
+                  (subst
+                    (f y ∈ₑ_)
+                    (dual x .snd)
+                    (isotonef⁺← x y x≤y (f y)
+                      (subst (f y ∈ₑ_)
+                        (sym (dual y .snd))
+                        (equivFun (principalUpsetMembership S (f y) (f y)) (rflS (f y))))))
+
+        f⁺∘f : ∀ x → x ≤P (f⁺ ∘ f) x
+        f⁺∘f x = ∥₁.rec (propP _ _)
+                        (λ ((a , x≤a) , fib) →
+                           subst (x ≤P_) (fib ∙ cong f⁺ (fx∈pre .snd)) x≤a)
+                        (fx∈pre .fst .snd)
+          where fx∈pre : f x ∈ₑ (f⁺ ⃖ (x ↑))
+                fx∈pre = subst (f x ∈ₑ_) (sym (dual x .snd))
+                               (equivFun (principalUpsetMembership S (f x) (f x)) (rflS (f x)))
+
+        f∘f⁺ : ∀ y → (f ∘ f⁺) y ≤S y
+        f∘f⁺ y = invEq (principalUpsetMembership S (f (f⁺ y)) y)
+                       (subst (y ∈ₑ_) (dual (f⁺ y) .snd)
+                              ((y , ∣ ((f⁺ y) , (rflP (f⁺ y))) , refl ∣₁) , refl))
 
 EqualResidual→Involution : (P : Poset ℓ ℓ')
                          → (f : ⟨ P ⟩ → ⟨ P ⟩)
