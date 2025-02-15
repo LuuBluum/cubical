@@ -284,14 +284,11 @@ module _
       _≤P_ = PosetStr._≤_ (snd P)
       _≤S_ = PosetStr._≤_ (snd S)
 
-      propP = IsPoset.is-prop-valued isP
       rflP = IsPoset.is-refl isP
-      antiP = IsPoset.is-antisym isP
       transP = IsPoset.is-trans isP
 
       propS = IsPoset.is-prop-valued isS
       rflS = IsPoset.is-refl isS
-      antiS = IsPoset.is-antisym isS
       transS = IsPoset.is-trans isS
 
     -- We can now define the type of residuated maps independent of their residual
@@ -534,13 +531,9 @@ isDualResiduated→isResidual P S f⁺ dual
 
         propP = IsPoset.is-prop-valued isP
         rflP = IsPoset.is-refl isP
-        antiP = IsPoset.is-antisym isP
         transP = IsPoset.is-trans isP
 
-        propS = IsPoset.is-prop-valued isS
         rflS = IsPoset.is-refl isS
-        antiS = IsPoset.is-antisym isS
-        transS = IsPoset.is-trans isS
 
         isotonef⁺ : IsIsotone (snd S) f⁺ (snd P)
         isotonef⁺ = PreimagePrincipalUpsetIsUpset→IsIsotone f⁺
