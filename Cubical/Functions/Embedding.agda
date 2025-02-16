@@ -517,6 +517,21 @@ _∩ₑ_ {A = A} X Y = (Σ[ x ∈ A ] x ∈ₑ X × x ∈ₑ Y) ,
                     EmbeddingΣProp λ x → isProp× (isProp∈ₑ x X)
                                                  (isProp∈ₑ x Y)
 
+∈ₑDist∩ₑ : {A : Type ℓ}
+           (X : Embedding A ℓ')
+           (Y : Embedding A ℓ'')
+          → ∀ x → x ∈ₑ (X ∩ₑ Y) ≃ (x ∈ₑ X) × (x ∈ₑ Y)
+∈ₑDist∩ₑ X Y x
+  = propBiimpl→Equiv (isProp∈ₑ x (X ∩ₑ Y))
+                     (isProp× (isProp∈ₑ x X) (isProp∈ₑ x Y))
+                     (λ x∈∩ → subst (_∈ₑ X)
+                                    (x∈∩ .snd)
+                                    (x∈∩ .fst .snd .fst) ,
+                              subst (_∈ₑ Y)
+                                    (x∈∩ .snd)
+                                    (x∈∩ .fst .snd .snd))
+                      λ (x∈X , x∈Y) → (x , x∈X , x∈Y) , refl
+
 _∪ₑ_ : {A : Type ℓ}
        (X : Embedding A ℓ')
        (Y : Embedding A ℓ'')
