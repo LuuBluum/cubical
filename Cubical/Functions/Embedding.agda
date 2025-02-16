@@ -509,6 +509,12 @@ isTrans⊆ₑ : {A : Type ℓ}
           → X ⊆ₑ Z
 isTrans⊆ₑ X Y Z X⊆Y Y⊆Z x = (Y⊆Z x) ∘ (X⊆Y x)
 
+≡→⊆ₑ : {A : Type ℓ}
+        (X Y : Embedding A ℓ')
+      → X ≡ Y
+      → (X ⊆ₑ Y) × (Y ⊆ₑ X)
+≡→⊆ₑ X Y X≡Y = invEq (EmbeddingIP X Y) X≡Y
+
 _∩ₑ_ : {A : Type ℓ}
        (X : Embedding A ℓ')
        (Y : Embedding A ℓ'')
