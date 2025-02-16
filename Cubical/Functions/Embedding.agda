@@ -538,6 +538,23 @@ _∩ₑ_ {A = A} X Y = (Σ[ x ∈ A ] x ∈ₑ X × x ∈ₑ Y) ,
                                     (x∈∩ .fst .snd .snd))
                       λ (x∈X , x∈Y) → (x , x∈X , x∈Y) , refl
 
+⊆ₑDist∩ₑ : {A : Type ℓ}
+            (X : Embedding A ℓ')
+            (Y : Embedding A ℓ'')
+            (Z : Embedding A ℓ''')
+          → Z ⊆ₑ (X ∩ₑ Y) ≃ (Z ⊆ₑ X) × (Z ⊆ₑ Y)
+⊆ₑDist∩ₑ X Y Z
+  = propBiimpl→Equiv (isProp⊆ₑ Z (X ∩ₑ Y))
+                     (isProp× (isProp⊆ₑ Z X)
+                              (isProp⊆ₑ Z Y))
+                     (λ Z⊆X∩Y → (λ z z∈Z → equivFun (∈ₑDist∩ₑ X Y z)
+                                                     (Z⊆X∩Y z z∈Z) .fst) ,
+                                  λ z z∈Z → equivFun (∈ₑDist∩ₑ X Y z)
+                                                     (Z⊆X∩Y z z∈Z) .snd)
+                      λ (Z⊆X , Z⊆Y) z z∈Z → invEq (∈ₑDist∩ₑ X Y z)
+                                                   ((Z⊆X z z∈Z) ,
+                                                    (Z⊆Y z z∈Z))
+
 _∪ₑ_ : {A : Type ℓ}
        (X : Embedding A ℓ')
        (Y : Embedding A ℓ'')
