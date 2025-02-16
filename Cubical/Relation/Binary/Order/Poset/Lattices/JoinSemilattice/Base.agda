@@ -69,6 +69,9 @@ JoinSemilatticeStr→PosetStr join = posetstr (JoinSemilatticeStr._≤_ join)
 JoinSemilattice : ∀ ℓ ℓ' → Type (ℓ-max (ℓ-suc ℓ) (ℓ-suc ℓ'))
 JoinSemilattice ℓ ℓ' = TypeWithStr ℓ (JoinSemilatticeStr ℓ')
 
+JoinSemilattice→Poset : ∀{ℓ ℓ'} → JoinSemilattice ℓ ℓ' → Poset ℓ ℓ'
+JoinSemilattice→Poset L = ⟨ L ⟩ , JoinSemilatticeStr→PosetStr (L .snd)
+
 joinsemilattice : (A : Type ℓ) → (_≤_ : Rel A A ℓ') → (_∨l_ : A → A → A) (1l : A) → IsJoinSemilattice _≤_ _∨l_ 1l → JoinSemilattice ℓ ℓ'
 joinsemilattice A _≤_ _∨l_ 1l lat = A , (joinsemilatticestr _≤_ _∨l_ 1l lat)
 

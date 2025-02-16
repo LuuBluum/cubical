@@ -74,6 +74,9 @@ LatticeStr→PosetStr lat = posetstr (LatticeStr._≤_ lat)
 Lattice : ∀ ℓ ℓ' → Type (ℓ-max (ℓ-suc ℓ) (ℓ-suc ℓ'))
 Lattice ℓ ℓ' = TypeWithStr ℓ (LatticeStr ℓ')
 
+Lattice→Poset : ∀{ℓ ℓ'} → Lattice ℓ ℓ' → Poset ℓ ℓ'
+Lattice→Poset L = ⟨ L ⟩ , LatticeStr→PosetStr (L .snd)
+
 lattice : (A : Type ℓ) → (_≤_ : Rel A A ℓ') → (_∨l_ _∧l_ : A → A → A) (0l 1l : A) → IsLattice _≤_ _∨l_ _∧l_ 0l 1l → Lattice ℓ ℓ'
 lattice A _≤_ _∨l_ _∧l_ 0l 1l lat = A , (latticestr _≤_ _∨l_ _∧l_ 0l 1l lat)
 

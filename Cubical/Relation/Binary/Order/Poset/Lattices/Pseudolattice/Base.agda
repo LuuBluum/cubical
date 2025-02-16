@@ -68,6 +68,9 @@ PseudolatticeStr→PosetStr lat = posetstr (PseudolatticeStr._≤_ lat)
 Pseudolattice : ∀ ℓ ℓ' → Type (ℓ-max (ℓ-suc ℓ) (ℓ-suc ℓ'))
 Pseudolattice ℓ ℓ' = TypeWithStr ℓ (PseudolatticeStr ℓ')
 
+Pseudolattice→Poset : ∀{ℓ ℓ'} → Pseudolattice ℓ ℓ' → Poset ℓ ℓ'
+Pseudolattice→Poset L = ⟨ L ⟩ , PseudolatticeStr→PosetStr (L .snd)
+
 pseudolattice : (A : Type ℓ) → (_≤_ : Rel A A ℓ') → (_∨l_ _∧l_ : A → A → A) → IsPseudolattice _≤_ _∨l_ _∧l_ → Pseudolattice ℓ ℓ'
 pseudolattice A _≤_ _∨l_ _∧l_ lat = A , (pseudolatticestr _≤_ _∨l_ _∧l_ lat)
 

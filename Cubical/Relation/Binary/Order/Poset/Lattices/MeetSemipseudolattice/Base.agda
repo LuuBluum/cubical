@@ -65,6 +65,9 @@ MeetSemipseudolatticeStr→PosetStr meet = posetstr (MeetSemipseudolatticeStr._�
 MeetSemipseudolattice : ∀ ℓ ℓ' → Type (ℓ-max (ℓ-suc ℓ) (ℓ-suc ℓ'))
 MeetSemipseudolattice ℓ ℓ' = TypeWithStr ℓ (MeetSemipseudolatticeStr ℓ')
 
+MeetSemipseudolattice→Poset : ∀{ℓ ℓ'} → MeetSemipseudolattice ℓ ℓ' → Poset ℓ ℓ'
+MeetSemipseudolattice→Poset L = ⟨ L ⟩ , MeetSemipseudolatticeStr→PosetStr (L .snd)
+
 meetsemipseudolattice : (A : Type ℓ) → (_≤_ : Rel A A ℓ') → (_∧l_ : A → A → A) → IsMeetSemipseudolattice _≤_ _∧l_ → MeetSemipseudolattice ℓ ℓ'
 meetsemipseudolattice A _≤_ _∧l_ lat = A , (meetsemipseudolatticestr _≤_ _∧l_ lat)
 
