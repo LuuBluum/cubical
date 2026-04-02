@@ -12,113 +12,112 @@ Axel Ljungström, 2024
 -}</a>
 
 <a id="247" class="Comment">-- The &quot;--safe&quot; flag ensures that there are no postulates or unfinished goals</a>
-<a id="325" class="Symbol">{-#</a> <a id="329" class="Keyword">OPTIONS</a> <a id="337" class="Pragma">--safe</a> <a id="344" class="Symbol">#-}</a>
-<a id="348" class="Keyword">module</a> <a id="355" href="Cubical.Papers.SmashProducts.html" class="Module">Cubical.Papers.SmashProducts</a> <a id="384" class="Keyword">where</a>
-<a id="390" class="Comment">-- Section 2</a>
-<a id="403" class="Keyword">import</a> <a id="410" href="Cubical.WildCat.Base.html" class="Module">Cubical.WildCat.Base</a>                        <a id="454" class="Symbol">as</a> <a id="457" class="Module">WCat1</a>
-<a id="463" class="Keyword">import</a> <a id="470" href="Cubical.WildCat.Instances.Pointed.html" class="Module">Cubical.WildCat.Instances.Pointed</a>           <a id="514" class="Symbol">as</a> <a id="517" class="Module">WCat2</a>
-<a id="523" class="Keyword">import</a> <a id="530" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">Cubical.WildCat.BraidedSymmetricMonoidal</a>    <a id="574" class="Symbol">as</a> <a id="577" class="Module">WCat3</a>
-<a id="583" class="Keyword">import</a> <a id="590" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Cubical.HITs.SmashProduct.Base</a>              <a id="634" class="Symbol">as</a> <a id="637" class="Module">Smash</a>
+<a id="325" class="Keyword">module</a> <a id="332" href="Cubical.Papers.SmashProducts.html" class="Module">Cubical.Papers.SmashProducts</a> <a id="361" class="Keyword">where</a>
+<a id="367" class="Comment">-- Section 2</a>
+<a id="380" class="Keyword">import</a> <a id="387" href="Cubical.WildCat.Base.html" class="Module">Cubical.WildCat.Base</a>                        <a id="431" class="Symbol">as</a> <a id="434" class="Module">WCat1</a>
+<a id="440" class="Keyword">import</a> <a id="447" href="Cubical.WildCat.Instances.Pointed.html" class="Module">Cubical.WildCat.Instances.Pointed</a>           <a id="491" class="Symbol">as</a> <a id="494" class="Module">WCat2</a>
+<a id="500" class="Keyword">import</a> <a id="507" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">Cubical.WildCat.BraidedSymmetricMonoidal</a>    <a id="551" class="Symbol">as</a> <a id="554" class="Module">WCat3</a>
+<a id="560" class="Keyword">import</a> <a id="567" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Cubical.HITs.SmashProduct.Base</a>              <a id="611" class="Symbol">as</a> <a id="614" class="Module">Smash</a>
 
-<a id="644" class="Comment">-- Section 3</a>
-<a id="657" class="Keyword">import</a> <a id="664" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Cubical.Foundations.Pointed.Homogeneous</a>     <a id="708" class="Symbol">as</a> <a id="711" class="Module">Hom</a>
+<a id="621" class="Comment">-- Section 3</a>
+<a id="634" class="Keyword">import</a> <a id="641" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Cubical.Foundations.Pointed.Homogeneous</a>     <a id="685" class="Symbol">as</a> <a id="688" class="Module">Hom</a>
 
-<a id="716" class="Comment">-- Section 5</a>
-<a id="729" class="Keyword">import</a> <a id="736" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html" class="Module">Cubical.HITs.SmashProduct.SymmetricMonoidalCat</a> <a id="783" class="Symbol">as</a> <a id="786" class="Module">SM</a>
+<a id="693" class="Comment">-- Section 5</a>
+<a id="706" class="Keyword">import</a> <a id="713" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html" class="Module">Cubical.HITs.SmashProduct.SymmetricMonoidalCat</a> <a id="760" class="Symbol">as</a> <a id="763" class="Module">SM</a>
 
-<a id="790" class="Comment">-- Section 6</a>
-<a id="803" class="Keyword">import</a> <a id="810" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">Cubical.HITs.SmashProduct.Induction</a>         <a id="854" class="Symbol">as</a> <a id="857" class="Module">SmashInduction</a>
+<a id="767" class="Comment">-- Section 6</a>
+<a id="780" class="Keyword">import</a> <a id="787" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">Cubical.HITs.SmashProduct.Induction</a>         <a id="831" class="Symbol">as</a> <a id="834" class="Module">SmashInduction</a>
 
-<a id="873" class="Comment">---- 2 Background ----</a>
-<a id="896" class="Comment">--- 2.1 Symmetric monoidal wild categories</a>
+<a id="850" class="Comment">---- 2 Background ----</a>
+<a id="873" class="Comment">--- 2.1 Symmetric monoidal wild categories</a>
 
-<a id="940" class="Comment">-- Definition 1 (Wild categories)</a>
-<a id="974" class="Keyword">open</a> <a id="979" href="Cubical.WildCat.Base.html" class="Module">WCat1</a> <a id="985" class="Keyword">using</a> <a id="991" class="Symbol">(</a><a id="992" href="Cubical.WildCat.Base.html#333" class="Record">WildCat</a><a id="999" class="Symbol">)</a>
+<a id="917" class="Comment">-- Definition 1 (Wild categories)</a>
+<a id="951" class="Keyword">open</a> <a id="956" href="Cubical.WildCat.Base.html" class="Module">WCat1</a> <a id="962" class="Keyword">using</a> <a id="968" class="Symbol">(</a><a id="969" href="Cubical.WildCat.Base.html#310" class="Record">WildCat</a><a id="976" class="Symbol">)</a>
 
-<a id="1002" class="Comment">-- Proposition 2 (Pointed types form a wild cat)</a>
-<a id="1051" class="Keyword">open</a> <a id="1056" href="Cubical.WildCat.Instances.Pointed.html" class="Module">WCat2</a> <a id="1062" class="Keyword">using</a> <a id="1068" class="Symbol">(</a><a id="1069" href="Cubical.WildCat.Instances.Pointed.html#217" class="Function">PointedCat</a><a id="1079" class="Symbol">)</a>
+<a id="979" class="Comment">-- Proposition 2 (Pointed types form a wild cat)</a>
+<a id="1028" class="Keyword">open</a> <a id="1033" href="Cubical.WildCat.Instances.Pointed.html" class="Module">WCat2</a> <a id="1039" class="Keyword">using</a> <a id="1045" class="Symbol">(</a><a id="1046" href="Cubical.WildCat.Instances.Pointed.html#194" class="Function">PointedCat</a><a id="1056" class="Symbol">)</a>
 
-<a id="1082" class="Comment">-- Definition 3 (Monoidal wild categories)</a>
-<a id="1125" class="Keyword">open</a> <a id="1130" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">WCat3</a> <a id="1136" class="Keyword">using</a> <a id="1142" class="Symbol">(</a><a id="1143" href="Cubical.WildCat.BraidedSymmetricMonoidal.html#507" class="Record">isMonoidalWildCat</a><a id="1160" class="Symbol">)</a>
+<a id="1059" class="Comment">-- Definition 3 (Monoidal wild categories)</a>
+<a id="1102" class="Keyword">open</a> <a id="1107" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">WCat3</a> <a id="1113" class="Keyword">using</a> <a id="1119" class="Symbol">(</a><a id="1120" href="Cubical.WildCat.BraidedSymmetricMonoidal.html#484" class="Record">isMonoidalWildCat</a><a id="1137" class="Symbol">)</a>
 
-<a id="1163" class="Comment">-- Definition 4 (Symmetric Monoidal wild categories)</a>
-<a id="1216" class="Keyword">open</a> <a id="1221" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">WCat3</a> <a id="1227" class="Keyword">using</a> <a id="1233" class="Symbol">(</a><a id="1234" href="Cubical.WildCat.BraidedSymmetricMonoidal.html#3219" class="Function">SymmetricMonoidalPrecat</a><a id="1257" class="Symbol">)</a>
+<a id="1140" class="Comment">-- Definition 4 (Symmetric Monoidal wild categories)</a>
+<a id="1193" class="Keyword">open</a> <a id="1198" href="Cubical.WildCat.BraidedSymmetricMonoidal.html" class="Module">WCat3</a> <a id="1204" class="Keyword">using</a> <a id="1210" class="Symbol">(</a><a id="1211" href="Cubical.WildCat.BraidedSymmetricMonoidal.html#2959" class="Record">isSymmetricWildCat</a><a id="1229" class="Symbol">)</a>
 
-<a id="1260" class="Comment">--- 2.2 Smash Products</a>
-<a id="1283" class="Comment">-- Definition 5 (Smash products -- note: defined as a coproduct in the</a>
-<a id="1354" class="Comment">-- library. E.g. the ⟨ x , y ⟩ constructor here is simply</a>
-<a id="1412" class="Comment">-- inr(x,y). Also note that pushₗ and pushᵣ are inverted with this</a>
-<a id="1479" class="Comment">-- definition.)</a>
-<a id="1495" class="Keyword">open</a> <a id="1500" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1506" class="Keyword">using</a> <a id="1512" class="Symbol">(</a><a id="1513" href="Cubical.HITs.SmashProduct.Base.html#2060" class="Function Operator">_⋀_</a><a id="1516" class="Symbol">)</a>
+<a id="1232" class="Comment">--- 2.2 Smash Products</a>
+<a id="1255" class="Comment">-- Definition 5 (Smash products -- note: defined as a pushout in the</a>
+<a id="1324" class="Comment">-- library. E.g. the ⟨ x , y ⟩ constructor here is simply</a>
+<a id="1382" class="Comment">-- inr(x,y). Also note that pushₗ and pushᵣ are inverted with this</a>
+<a id="1449" class="Comment">-- definition.)</a>
+<a id="1465" class="Keyword">open</a> <a id="1470" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1476" class="Keyword">using</a> <a id="1482" class="Symbol">(</a><a id="1483" href="Cubical.HITs.SmashProduct.Base.html#2037" class="Function Operator">_⋀_</a><a id="1486" class="Symbol">)</a>
 
-<a id="1519" class="Comment">-- Definition 6 (Functorial action of ⋀)</a>
-<a id="1560" class="Keyword">open</a> <a id="1565" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1571" class="Keyword">using</a> <a id="1577" class="Symbol">(</a><a id="1578" href="Cubical.HITs.SmashProduct.Base.html#8445" class="Function Operator">_⋀→_</a><a id="1582" class="Symbol">)</a>
-<a id="1584" class="Comment">-- Proposition 7 (Commutativity of ⋀)</a>
-<a id="1622" class="Comment">-- Postponed -- stated as part of Theorem 21</a>
+<a id="1489" class="Comment">-- Definition 6 (Functorial action of ⋀)</a>
+<a id="1530" class="Keyword">open</a> <a id="1535" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1541" class="Keyword">using</a> <a id="1547" class="Symbol">(</a><a id="1548" href="Cubical.HITs.SmashProduct.Base.html#8387" class="Function Operator">_⋀→_</a><a id="1552" class="Symbol">)</a>
+<a id="1554" class="Comment">-- Proposition 7 (Commutativity of ⋀)</a>
+<a id="1592" class="Comment">-- Postponed -- stated as part of Theorem 21</a>
 
-<a id="1668" class="Comment">---- 3 Associativity ----</a>
-<a id="1694" class="Comment">-- Definition 8 (Double smash product)</a>
-<a id="1733" class="Keyword">open</a> <a id="1738" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1744" class="Keyword">using</a> <a id="1750" class="Symbol">(</a><a id="1751" href="Cubical.HITs.SmashProduct.Base.html#11879" class="Datatype">⋀×2</a><a id="1754" class="Symbol">)</a>
+<a id="1638" class="Comment">---- 3 Associativity ----</a>
+<a id="1664" class="Comment">-- Definition 8 (Double smash product)</a>
+<a id="1703" class="Keyword">open</a> <a id="1708" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1714" class="Keyword">using</a> <a id="1720" class="Symbol">(</a><a id="1721" href="Cubical.HITs.SmashProduct.Base.html#11821" class="Datatype">⋀×2</a><a id="1724" class="Symbol">)</a>
 
-<a id="1757" class="Comment">-- Equivalence between smash product and double smash</a>
-<a id="1811" class="Keyword">open</a> <a id="1816" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1822" class="Keyword">using</a> <a id="1828" class="Symbol">(</a><a id="1829" href="Cubical.HITs.SmashProduct.Base.html#29210" class="Function">Iso-⋀-⋀×2</a><a id="1838" class="Symbol">)</a>
+<a id="1727" class="Comment">-- Equivalence between smash product and double smash</a>
+<a id="1781" class="Keyword">open</a> <a id="1786" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1792" class="Keyword">using</a> <a id="1798" class="Symbol">(</a><a id="1799" href="Cubical.HITs.SmashProduct.Base.html#29152" class="Function">Iso-⋀-⋀×2</a><a id="1808" class="Symbol">)</a>
 
-<a id="1841" class="Comment">-- Proposition 9 (Associativity of ⋀)</a>
-<a id="1879" class="Comment">-- Postponed -- stated as part of Theorem 21</a>
+<a id="1811" class="Comment">-- Proposition 9 (Associativity of ⋀)</a>
+<a id="1849" class="Comment">-- Postponed -- stated as part of Theorem 21</a>
 
-<a id="1925" class="Comment">---- 4 The Heuristic ----</a>
-<a id="1951" class="Comment">-- Lemma 10 (first induction principle for smash products)</a>
-<a id="2010" class="Keyword">open</a> <a id="2015" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2021" class="Keyword">using</a> <a id="2027" class="Symbol">(</a><a id="2028" href="Cubical.HITs.SmashProduct.Base.html#35850" class="Function">⋀-fun≡</a><a id="2034" class="Symbol">)</a>
+<a id="1895" class="Comment">---- 4 The Heuristic ----</a>
+<a id="1921" class="Comment">-- Lemma 10 (first induction principle for smash products)</a>
+<a id="1980" class="Keyword">open</a> <a id="1985" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="1991" class="Keyword">using</a> <a id="1997" class="Symbol">(</a><a id="1998" href="Cubical.HITs.SmashProduct.Base.html#35702" class="Function">⋀-fun≡</a><a id="2004" class="Symbol">)</a>
 
-<a id="2037" class="Comment">-- Definition 10</a>
-<a id="2054" class="Keyword">open</a> <a id="2059" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2065" class="Keyword">using</a> <a id="2071" class="Symbol">(</a><a id="2072" href="Cubical.HITs.SmashProduct.Base.html#35850" class="Function">⋀-fun≡</a><a id="2078" class="Symbol">)</a>
+<a id="2007" class="Comment">-- Definition 10</a>
+<a id="2024" class="Keyword">open</a> <a id="2029" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2035" class="Keyword">using</a> <a id="2041" class="Symbol">(</a><a id="2042" href="Cubical.HITs.SmashProduct.Base.html#35702" class="Function">⋀-fun≡</a><a id="2048" class="Symbol">)</a>
 
-<a id="2081" class="Comment">-- Definition 11 (version using ≡ instead of ≃⋆ is used here)</a>
-<a id="2143" class="Keyword">open</a> <a id="2148" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Hom</a> <a id="2152" class="Keyword">using</a> <a id="2158" class="Symbol">(</a><a id="2159" href="Cubical.Foundations.Pointed.Homogeneous.html#1390" class="Function">isHomogeneous</a><a id="2172" class="Symbol">)</a>
+<a id="2051" class="Comment">-- Definition 11 (version using ≡ instead of ≃⋆ is used here)</a>
+<a id="2113" class="Keyword">open</a> <a id="2118" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Hom</a> <a id="2122" class="Keyword">using</a> <a id="2128" class="Symbol">(</a><a id="2129" href="Cubical.Foundations.Pointed.Homogeneous.html#1367" class="Function">isHomogeneous</a><a id="2142" class="Symbol">)</a>
 
-<a id="2175" class="Comment">-- Lemma 12 (Evan&#39;s trick)</a>
-<a id="2202" class="Keyword">open</a> <a id="2207" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Hom</a> <a id="2211" class="Keyword">using</a> <a id="2217" class="Symbol">(</a><a id="2218" href="Cubical.Foundations.Pointed.Homogeneous.html#1616" class="Function">→∙Homogeneous≡</a><a id="2232" class="Symbol">)</a>
+<a id="2145" class="Comment">-- Lemma 12 (Evan&#39;s trick)</a>
+<a id="2172" class="Keyword">open</a> <a id="2177" href="Cubical.Foundations.Pointed.Homogeneous.html" class="Module">Hom</a> <a id="2181" class="Keyword">using</a> <a id="2187" class="Symbol">(</a><a id="2188" href="Cubical.Foundations.Pointed.Homogeneous.html#1593" class="Function">→∙Homogeneous≡</a><a id="2202" class="Symbol">)</a>
 
-<a id="2235" class="Comment">-- Lemma 13 (Evan&#39;s trick for smash products)</a>
-<a id="2281" class="Keyword">open</a> <a id="2286" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2292" class="Keyword">using</a> <a id="2298" class="Symbol">(</a><a id="2299" href="Cubical.HITs.SmashProduct.Base.html#6073" class="Function">⋀→∙Homogeneous≡</a><a id="2314" class="Symbol">)</a>
+<a id="2205" class="Comment">-- Lemma 13 (Evan&#39;s trick for smash products)</a>
+<a id="2251" class="Keyword">open</a> <a id="2256" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2262" class="Keyword">using</a> <a id="2268" class="Symbol">(</a><a id="2269" href="Cubical.HITs.SmashProduct.Base.html#6023" class="Function">⋀→∙Homogeneous≡</a><a id="2284" class="Symbol">)</a>
 
-<a id="2317" class="Comment">-- Lemma 14 (Evan&#39;s trick smash products, v2)</a>
-<a id="2363" class="Keyword">open</a> <a id="2368" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2374" class="Keyword">using</a> <a id="2380" class="Symbol">(</a><a id="2381" href="Cubical.HITs.SmashProduct.Base.html#6718" class="Function">⋀→Homogeneous≡</a><a id="2395" class="Symbol">)</a>
+<a id="2287" class="Comment">-- Lemma 14 (Evan&#39;s trick smash products, v2)</a>
+<a id="2333" class="Keyword">open</a> <a id="2338" href="Cubical.HITs.SmashProduct.Base.html" class="Module">Smash</a> <a id="2344" class="Keyword">using</a> <a id="2350" class="Symbol">(</a><a id="2351" href="Cubical.HITs.SmashProduct.Base.html#6660" class="Function">⋀→Homogeneous≡</a><a id="2365" class="Symbol">)</a>
 
-<a id="2398" class="Comment">-- Definition 15</a>
-<a id="2415" class="Keyword">open</a> <a id="2420" href="Cubical.HITs.SmashProduct.Base.html#37235" class="Module">Smash.⋀-fun≡&#39;</a> <a id="2434" class="Keyword">renaming</a> <a id="2443" class="Symbol">(</a><a id="2444" href="Cubical.HITs.SmashProduct.Base.html#37725" class="Function">Fₗ</a> <a id="2447" class="Symbol">to</a> <a id="2450" class="Function">L</a> <a id="2452" class="Symbol">;</a> <a id="2454" href="Cubical.HITs.SmashProduct.Base.html#37869" class="Function">Fᵣ</a> <a id="2457" class="Symbol">to</a> <a id="2460" class="Function">R</a><a id="2461" class="Symbol">)</a>
+<a id="2368" class="Comment">-- Definition 15</a>
+<a id="2385" class="Keyword">open</a> <a id="2390" href="Cubical.HITs.SmashProduct.Base.html#37087" class="Module">Smash.⋀-fun≡&#39;</a> <a id="2404" class="Keyword">renaming</a> <a id="2413" class="Symbol">(</a><a id="2414" href="Cubical.HITs.SmashProduct.Base.html#37577" class="Function">Fₗ</a> <a id="2417" class="Symbol">to</a> <a id="2420" class="Function">L</a> <a id="2422" class="Symbol">;</a> <a id="2424" href="Cubical.HITs.SmashProduct.Base.html#37721" class="Function">Fᵣ</a> <a id="2427" class="Symbol">to</a> <a id="2430" class="Function">R</a><a id="2431" class="Symbol">)</a>
 
-<a id="2464" class="Comment">-- Lemma 16</a>
-<a id="2476" class="Keyword">open</a> <a id="2481" href="Cubical.HITs.SmashProduct.Base.html#37235" class="Module">Smash.⋀-fun≡&#39;</a> <a id="2495" class="Keyword">using</a> <a id="2501" class="Symbol">(</a><a id="2502" href="Cubical.HITs.SmashProduct.Base.html#38718" class="Function">main</a><a id="2506" class="Symbol">)</a>
+<a id="2434" class="Comment">-- Lemma 16</a>
+<a id="2446" class="Keyword">open</a> <a id="2451" href="Cubical.HITs.SmashProduct.Base.html#37087" class="Module">Smash.⋀-fun≡&#39;</a> <a id="2465" class="Keyword">using</a> <a id="2471" class="Symbol">(</a><a id="2472" href="Cubical.HITs.SmashProduct.Base.html#38570" class="Function">main</a><a id="2476" class="Symbol">)</a>
 
-<a id="2509" class="Comment">-- Lemmas 17/18</a>
-<a id="2525" class="Comment">-- Omitted (used implicitly in formalisation)</a>
+<a id="2479" class="Comment">-- Lemmas 17/18</a>
+<a id="2495" class="Comment">-- Omitted (used implicitly in formalisation)</a>
 
 
-<a id="2573" class="Comment">---- 5 The symmetric monoidal structure ----</a>
-<a id="2618" class="Comment">-- Proposition 19/20 (Hexagon and pentagon)</a>
-<a id="2662" class="Comment">-- Postponed - stated as part of Theorem 21</a>
+<a id="2543" class="Comment">---- 5 The symmetric monoidal structure ----</a>
+<a id="2588" class="Comment">-- Proposition 19/20 (Hexagon and pentagon)</a>
+<a id="2632" class="Comment">-- Postponed - stated as part of Theorem 21</a>
 
-<a id="2707" class="Comment">-- Theorem 21 (Symmetric monoidal structure)</a>
-<a id="2752" class="Keyword">open</a> <a id="2757" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html" class="Module">SM</a> <a id="2760" class="Keyword">using</a> <a id="2766" class="Symbol">(</a><a id="2767" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html#2521" class="Function">⋀Symm</a><a id="2772" class="Symbol">)</a>
+<a id="2677" class="Comment">-- Theorem 21 (Symmetric monoidal structure)</a>
+<a id="2722" class="Keyword">open</a> <a id="2727" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html" class="Module">SM</a> <a id="2730" class="Keyword">using</a> <a id="2736" class="Symbol">(</a><a id="2737" href="Cubical.HITs.SmashProduct.SymmetricMonoidalCat.html#2498" class="Function">⋀Symm</a><a id="2742" class="Symbol">)</a>
 
-<a id="2775" class="Comment">--- 5.1 Back to Brunerie&#39;s thesis</a>
-<a id="2809" class="Comment">-- This section is only meant to be an informal discussion and has not</a>
-<a id="2880" class="Comment">-- been formalised, as stated in the paper.</a>
+<a id="2745" class="Comment">--- 5.1 Back to Brunerie&#39;s thesis</a>
+<a id="2779" class="Comment">-- This section is only meant to be an informal discussion and has not</a>
+<a id="2850" class="Comment">-- been formalised, as stated in the paper.</a>
 
-<a id="2925" class="Comment">-- 6. A formal statement of the heuristic</a>
-<a id="2967" class="Comment">-- Definition 25 (FS)</a>
-<a id="2989" class="Keyword">open</a> <a id="2994" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3009" class="Keyword">using</a> <a id="3015" class="Symbol">(</a><a id="3016" href="Cubical.HITs.SmashProduct.Induction.html#1042" class="Function">FS</a><a id="3018" class="Symbol">)</a>
+<a id="2895" class="Comment">-- 6. A formal statement of the heuristic</a>
+<a id="2937" class="Comment">-- Definition 25 (FS)</a>
+<a id="2959" class="Keyword">open</a> <a id="2964" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="2979" class="Keyword">using</a> <a id="2985" class="Symbol">(</a><a id="2986" href="Cubical.HITs.SmashProduct.Induction.html#1019" class="Function">FS</a><a id="2988" class="Symbol">)</a>
 
-<a id="3021" class="Comment">-- Definition 26 (⋀̃)</a>
-<a id="3043" class="Keyword">open</a> <a id="3048" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3063" class="Keyword">using</a> <a id="3069" class="Symbol">(</a><a id="3070" href="Cubical.HITs.SmashProduct.Induction.html#1464" class="Function">⋀̃</a><a id="3072" class="Symbol">)</a>
+<a id="2991" class="Comment">-- Definition 26 (⋀̃)</a>
+<a id="3013" class="Keyword">open</a> <a id="3018" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3033" class="Keyword">using</a> <a id="3039" class="Symbol">(</a><a id="3040" href="Cubical.HITs.SmashProduct.Induction.html#1441" class="Function">⋀̃</a><a id="3042" class="Symbol">)</a>
 
-<a id="3075" class="Comment">-- Theorem 27 (⋀̃→⋀ induction with coherences)</a>
-<a id="3122" class="Keyword">open</a> <a id="3127" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3142" class="Keyword">using</a> <a id="3148" class="Symbol">(</a><a id="3149" href="Cubical.HITs.SmashProduct.Induction.html#3223" class="Function">⋀̃→⋀-ind</a> <a id="3158" class="Symbol">;</a> <a id="3160" href="Cubical.HITs.SmashProduct.Induction.html#3527" class="Function">⋀̃→⋀-ind-coh</a><a id="3172" class="Symbol">)</a>
+<a id="3045" class="Comment">-- Theorem 27 (⋀̃→⋀ induction with coherences)</a>
+<a id="3092" class="Keyword">open</a> <a id="3097" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3112" class="Keyword">using</a> <a id="3118" class="Symbol">(</a><a id="3119" href="Cubical.HITs.SmashProduct.Induction.html#3200" class="Function">⋀̃→⋀-ind</a> <a id="3128" class="Symbol">;</a> <a id="3130" href="Cubical.HITs.SmashProduct.Induction.html#3504" class="Function">⋀̃→⋀-ind-coh</a><a id="3142" class="Symbol">)</a>
 
-<a id="3175" class="Comment">-- Corollary 28 (⋀̃→⋀ induction without)</a>
-<a id="3216" class="Keyword">open</a> <a id="3221" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3236" class="Keyword">using</a> <a id="3242" class="Symbol">(</a><a id="3243" href="Cubical.HITs.SmashProduct.Induction.html#3223" class="Function">⋀̃→⋀-ind</a><a id="3251" class="Symbol">)</a>
+<a id="3145" class="Comment">-- Corollary 28 (⋀̃→⋀ induction without)</a>
+<a id="3186" class="Keyword">open</a> <a id="3191" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3206" class="Keyword">using</a> <a id="3212" class="Symbol">(</a><a id="3213" href="Cubical.HITs.SmashProduct.Induction.html#3200" class="Function">⋀̃→⋀-ind</a><a id="3221" class="Symbol">)</a>
 
-<a id="3254" class="Comment">-- Corollary 29 (⋀̃→⋀ induction for pointed maps)</a>
-<a id="3304" class="Keyword">open</a> <a id="3309" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3324" class="Keyword">using</a> <a id="3330" class="Symbol">(</a><a id="3331" href="Cubical.HITs.SmashProduct.Induction.html#6477" class="Function">⋀̃→⋀-ind∙</a><a id="3340" class="Symbol">)</a>
+<a id="3224" class="Comment">-- Corollary 29 (⋀̃→⋀ induction for pointed maps)</a>
+<a id="3274" class="Keyword">open</a> <a id="3279" href="Cubical.HITs.SmashProduct.Induction.html" class="Module">SmashInduction</a> <a id="3294" class="Keyword">using</a> <a id="3300" class="Symbol">(</a><a id="3301" href="Cubical.HITs.SmashProduct.Induction.html#6454" class="Function">⋀̃→⋀-ind∙</a><a id="3310" class="Symbol">)</a>
 </pre></body></html>

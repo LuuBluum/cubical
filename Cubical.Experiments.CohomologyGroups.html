@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>Cubical.Experiments.CohomologyGroups</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--safe</a> <a id="20" class="Symbol">#-}</a>
-<a id="24" class="Keyword">module</a> <a id="31" href="Cubical.Experiments.CohomologyGroups.html" class="Module">Cubical.Experiments.CohomologyGroups</a> <a id="68" class="Keyword">where</a>
-<a id="74" class="Comment">{-
+<html><head><meta charset="utf-8"><title>Cubical.Experiments.CohomologyGroups</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="Cubical.Experiments.CohomologyGroups.html" class="Module">Cubical.Experiments.CohomologyGroups</a> <a id="45" class="Keyword">where</a>
+<a id="51" class="Comment">{-
 open import Cubical.Experiments.ZCohomologyOld.Base
 open import Cubical.Experiments.ZCohomologyOld.Properties
 open import Cubical.Experiments.ZCohomologyOld.MayerVietorisUnreduced
@@ -69,8 +68,8 @@ diagonalIso {A = A} B {C = C} ψ ϕ issurj ker→diag diag→ker = BijectionIsoT
   bijIso : BijectionIso A C
   map&#39; bijIso = compGroupHom fstProj (compGroupHom (map ψ) ϕ)
   inj bijIso a inker = pRec (isSetCarrier A _ _)
-                             (λ {(a&#39; , id) → (cong fst (sym (leftInv ψ (a , GroupStr.0g (snd A))) ∙∙ cong ψ⁻ id ∙∙ leftInv ψ (a&#39; , a&#39;)))
-                                           ∙ cong snd (sym (leftInv ψ (a&#39; , a&#39;)) ∙∙ cong ψ⁻ (sym id) ∙∙ leftInv ψ (a , GroupStr.0g (snd A)))})
+                             (λ {(a&#39; , id) → (cong fst (sym (ret ψ (a , GroupStr.0g (snd A))) ∙∙ cong ψ⁻ id ∙∙ ret ψ (a&#39; , a&#39;)))
+                                           ∙ cong snd (sym (ret ψ (a&#39; , a&#39;)) ∙∙ cong ψ⁻ (sym id) ∙∙ ret ψ (a , GroupStr.0g (snd A)))})
                              (ker→diag _ inker)
   surj bijIso c =
     pRec isPropPropTrunc
@@ -85,7 +84,7 @@ diagonalIso {A = A} B {C = C} ψ ϕ issurj ker→diag diag→ker = BijectionIsoT
                                                                            ∙∙ cong (fst (ψ⁻ b) A.+_) (GroupStr.invl (snd A) _)
                                                                            ∙∙ GroupStr.rid (snd A) _
                                                                         , (GroupStr.lid (snd A) _)))
-                                        ∙∙ rightInv ψ b)
+                                        ∙∙ sec ψ b)
                            ∙∙ id) ∣₁ })
          (issurj c)
 
@@ -114,8 +113,8 @@ H¹-S¹≅ℤ =
   module K = MV Unit Unit (S₊ 0) (λ _ → tt) (λ _ → tt)
 
   surjHelper :  (x : Int) (x₁ : S₊ 0) → x -[ 0 ]ₖ 0 ≡ S0→Int (x , x) x₁
-  surjHelper x true = Iso.leftInv (Iso-Kn-ΩKn+1 0) x
-  surjHelper x false = Iso.leftInv (Iso-Kn-ΩKn+1 0) x
+  surjHelper x true = Iso.ret (Iso-Kn-ΩKn+1 0) x
+  surjHelper x false = Iso.ret (Iso-Kn-ΩKn+1 0) x
 
   helper : (F : S₊ 0 → Int) (f g : ∥ (Unit → Int) ∥₂)
            (id : GroupHom.fun (K.Δ 0) (f , g) ≡ ∣ F ∣₂)
